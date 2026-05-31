@@ -94,4 +94,6 @@ CREATE TABLE movimentacao_conta (
         FOREIGN KEY (conta_destino_id)
         REFERENCES conta(id)
 );
+ALTER TABLE movimentacao_conta ADD COLUMN tipo_operacao VARCHAR(10);
+
 

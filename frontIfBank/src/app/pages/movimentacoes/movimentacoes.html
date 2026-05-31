@@ -1,0 +1,40 @@
+<div style="padding:2rem; max-width:400px; margin:auto;">
+  <h2>Movimentações</h2>
+
+  @if (etapa === 1) {
+    <h3>Etapa 1 — Destinatário</h3>
+    <label>Chave do destinatário</label>
+    <input [(ngModel)]="chaveDestinatario" placeholder="CPF, e-mail, chave aleatória..." />
+    <button (click)="validarDestinatario()" [disabled]="carregando">
+    {{ carregando ? 'Validando...' : 'Validar' }}
+    </button>
+    @if (erro) {
+      <p style="color:red;">{{ erro }}</p>
+    }
+  }
+
+  @if (etapa === 2 && !sucesso) {
+    <h3>Etapa 2 — Transferência</h3>
+    <p>Destinatário: <strong>{{ dadosDestinatario?.nomeContaDestinatario }}</strong></p>
+
+    <label>ID da conta de origem</label>
+    <input type="number" [(ngModel)]="idContaOrigem" />
+
+    <label>Valor (R$)</label>
+    <input type="number" [(ngModel)]="valor" />
+
+    <label>Descrição</label>
+    <input [(ngModel)]="descricao" />
+
+   <button (click)="realizarTransferencia()" [disabled]="carregando">
+    {{ carregando ? 'Transferindo...' : 'Transferir' }}
+    </button>
+    @if (erro) {
+      <p style="color:red;">{{ erro }}</p>
+    }
+  }
+
+  @if (sucesso) {
+    <p style="color:green;">✅ Transferência realizada com sucesso!</p>
+  }
+</div>

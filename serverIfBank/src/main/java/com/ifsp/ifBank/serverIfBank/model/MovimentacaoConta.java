@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "movimentacao_conta")
-public class MovimentacaoConta {
+public class    MovimentacaoConta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -32,4 +32,6 @@ public class MovimentacaoConta {
     private String descricao;
 
     private LocalDateTime dataMovimentacao;
+
+    private String tipoOperacao; // "ENTRADA" ou "SAIDA"
 }

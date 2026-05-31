@@ -18,6 +18,7 @@ public class ChavesTransferencia {
     @JoinColumn(name = "conta_id")
     private Conta conta;
 
+    @Column(name = "chave_transferencia")
     private String chave;
 
     private boolean ativo;
