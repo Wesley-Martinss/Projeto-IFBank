@@ -1,4 +1,53 @@
-<div style="padding:2rem;">
+<div style="padding: 2rem">
+  <div>
+    <!--Cabeçalho de boas vindas-->
+    <h2>Olá, {{ usuario?.nome }}!</h2>
+    <span>{{ usuario?.tipoUsuario }}</span>
+    <button (click)="sair()">Sair</button>
+  </div>
+
+  <!--Ará cliente-->
+  <!--ngIf Usada para exibir ou esconder um elemento com 
+  base em uma condição (verdadeira ou falsa).-->
+  <div *ngIf="usuario?.tipoUsuario === 'CLIENTE'">
+    <h3>Área do Cliente</h3>
+    <p>Bem vindo ao IFBank</p>
+    <a routerLink="/movimentacoes">Ir para Movimentações</a>
+  </div>
+
+  <!--Área do gerente-->
+  <div *ngIf="usuario?.tipoUsuario === 'GERENTE'">
+    <!--Mensagem de sucesso-->
+    @if (mensagemSucesso) {
+      {{ mensagemSucesso }}
+    }
+
+    <!--Lista de contas pendentes-->
+    @if (pendentes.length === 0) {
+      <p>Nenhuma solicitação pendente!</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of pendentes; track p.id) {
+            <tr>
+              <td>{{ p.nome }}</td>
+              <td>{{ p.email }}</td>
+              <td>
+                <button (click)="aprovar(p.id)" [disabled]="carregando">Aprovar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
   <h1>Home</h1>
   <a routerLink="/movimentacoes">Ir para Movimentações</a>
 </div>
