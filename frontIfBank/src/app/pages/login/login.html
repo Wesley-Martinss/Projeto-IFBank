@@ -1,4 +1,26 @@
-<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh;">
+<div
+  style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 1rem;
+    max-width: 300px;
+    margin: auto;
+  "
+>
   <h1>IfBank</h1>
-  <button (click)="entrar()">Login</button>
+
+  <input type="email" placeholder="E-mail" [(ngModel)]="email" />
+  <input type="password" placeholder="Senha" [(ngModel)]="senha" />
+
+  <button (click)="entrar()" [disabled]="carregando">
+    <!-- disabled desabilita o botão enquanto carrega -->
+    {{ carregando ? 'Entrando...' : 'Login' }}
+  </button>
+
+  @if (erro) {
+    <p style="color: red">{{ erro }}</p>
+  }
 </div>

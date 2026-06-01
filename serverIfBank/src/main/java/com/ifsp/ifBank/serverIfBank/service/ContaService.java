@@ -1,11 +1,13 @@
 package com.ifsp.ifBank.serverIfBank.service;
 
 import com.ifsp.ifBank.serverIfBank.model.Conta;
+import com.ifsp.ifBank.serverIfBank.model.Usuario;
 import com.ifsp.ifBank.serverIfBank.repository.ContaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,19 @@ public class ContaService {
 
         return false;
 
+    }
+
+    public Conta criarConta(Usuario usuario) {
+        Conta conta = new Conta();
+        conta.setUsuario(usuario);
+        conta.setAgencia("0001"); // Agência padrão    
+        conta.setSaldo(BigDecimal.ZERO);
+        conta.setAtiva(true);
+        conta.setDataCriacao(LocalDateTime.now());
+        conta = contaRepository.save(conta);
+        conta.setNumeroConta(String.valueOf(conta.getId()));
+        
+        return contaRepository.save(conta);
     }
 
 }
