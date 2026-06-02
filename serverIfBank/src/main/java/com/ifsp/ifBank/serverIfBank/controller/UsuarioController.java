@@ -62,13 +62,18 @@ public class UsuarioController {
     }
 
     @PostMapping("/aprovar/{usuarioId}")
-    public ResponseEntity<Void> aprovarConta(@PathVariable Integer usuarioId, @RequestParam Integer gerenteId){
+    public ResponseEntity<String> aprovarConta(@PathVariable("usuarioId") Integer usuarioId, @RequestParam("gerenteId") Integer gerenteId){
         try {
             usuarioService.aprovarConta(usuarioId, gerenteId);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Sucesso");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Erro Runtime: " + e.getMessage());
         }
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleAllExceptions(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("Erro Interno: " + ex.getClass().getName() + " - " + ex.getMessage());
+    }
 }

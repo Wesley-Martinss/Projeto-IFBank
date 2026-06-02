@@ -37,7 +37,11 @@ public class UsuarioService {
     public UsuarioDTO login(LoginDTO loginDTO) {
         Usuario usuario = usuarioRepository.findByEmailAndSenha(loginDTO.getEmail(), loginDTO.getSenha())
             .orElseThrow(() -> new RuntimeException("E-mail ou senha incorretos!"));
-    
+            
+        if (usuario.getStatusConta() != StatusConta.ATIVA) {
+            throw new RuntimeException("Conta não está ativa!");
+        }
+        
         return usuarioMapper.toDTO(usuario);
     }
 

@@ -51,8 +51,10 @@ public class ContaService {
         conta.setSaldo(BigDecimal.ZERO);
         conta.setAtiva(true);
         conta.setDataCriacao(LocalDateTime.now());
-        conta = contaRepository.save(conta);
-        conta.setNumeroConta(String.valueOf(conta.getId()));
+        
+        // Usa o ID do próprio usuário como número da conta. 
+        // Como cada usuário tem 1 conta, o número sempre será único e já existe antes de salvar!
+        conta.setNumeroConta(String.valueOf(usuario.getId()));
         
         return contaRepository.save(conta);
     }

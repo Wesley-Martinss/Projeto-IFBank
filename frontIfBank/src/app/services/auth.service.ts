@@ -48,15 +48,20 @@ export class AuthService {
     }
   }
   //Promise indica que uma função ou método executa uma operação assíncrona (como buscar dados ou verificar login) e, no futuro, retornará um resultado do tipo booleano (verdadeiro ou falso).
-  async aprovarConta(usuarioId: number, gerenteId: number): Promise<boolean> {
+  async aprovarConta(usuarioId: number, gerenteId: number): Promise<{sucesso: boolean, erro?: string}> {
     try {
       const res = await fetch(`${this.api}/aprovar/${usuarioId}?gerenteId=${gerenteId}`, {
         method: 'POST',
       });
-      return res.status === 200;
-    } catch (error) {
+      if (res.status === 200) {
+        return { sucesso: true };
+      } else {
+        const textoErro = await res.text();
+        return { sucesso: false, erro: textoErro };
+      }
+    } catch (error: any) {
       console.error('Erro ao aprovar conta:', error);
-      return false;
+      return { sucesso: false, erro: error.message };
     }
   }
 }

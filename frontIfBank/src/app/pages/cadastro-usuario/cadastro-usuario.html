@@ -1,0 +1,30 @@
+<form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
+  <label for="nome">Nome:</label>
+  <input id="nome" type="text" formControlName="nome" />
+
+  <label for="email">Email:</label>
+  <input id="email" type="email" formControlName="email" />
+
+  <label for="senha">Senha:</label>
+  <input id="senha" type="password" formControlName="senha" />
+
+  <label for="cpf">CPF:</label>
+  <input id="cpf" type="text" formControlName="cpf" />
+
+  <label for="dataNascimento">Data de Nascimento:</label>
+  <input id="dataNascimento" type="datetime-local" formControlName="dataNascimento" />
+
+  <label for="endereco">Endereço:</label>
+  <input id="endereco" type="text" formControlName="endereco" />
+
+  <label for="telefone">Telefone:</label>
+  <input id="telefone" type="text" formControlName="telefone" />
+
+  <label for="tipoUsuario">Tipo de Usuário:</label>
+  <select id="tipoUsuario" formControlName="tipoUsuario">
+    <option value="CLIENTE">Cliente</option>
+    <option value="GERENTE">Gerente</option>
+  </select>
+
+  <button type="submit">Cadastrar</button>
+</form>
