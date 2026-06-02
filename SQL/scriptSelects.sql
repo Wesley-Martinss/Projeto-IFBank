@@ -61,3 +61,29 @@ INSERT INTO usuario (
 );
 
 
+INSERT INTO usuario (
+    nome,
+    senha,
+    tipo_usuario,
+    cpf,
+    email,
+    data_nascimento,
+    endereco,
+    telefone,
+    status_conta,
+    ativo
+) VALUES (
+    'pendente cliente',
+    '123',
+    'CLIENTE',
+    '222.222.222-22',
+    'pendente@gmail.com',
+    '1995-08-20 00:00:00',
+    'Rua B',
+    '(16)92288-8888',
+    'PENDENTE_APROVACAO',
+    true
+);
+
+
+

@@ -114,7 +114,7 @@ public class MovimentacaoService {
 
         MovimentacaoConta movimentacao = new MovimentacaoConta();
 
-        movimentacao.setContaDestino(conta);
+        movimentacao.setContaOrigem(conta);
         movimentacao.setTipoMovimentacao(TipoMovimentacao.DEPOSITO);
         movimentacao.setValor(dto.getValor());
         movimentacao.setDescricao(dto.getDescricao());

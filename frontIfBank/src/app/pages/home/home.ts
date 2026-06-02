@@ -4,6 +4,7 @@ import { UsuarioDTO } from '../../models/usuario.model';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -76,4 +77,14 @@ export class HomeComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+  abrirMovimentacao(tipo: string) {
+    this.router.navigate(
+      ['/movimentacoes'],
+      {
+        queryParams: { tipo }
+      }
+    );
+  }
+    
 }

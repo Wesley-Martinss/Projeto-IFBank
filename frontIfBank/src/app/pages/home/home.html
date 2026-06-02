@@ -8,11 +8,21 @@
 
   <!-- Área Cliente -->
   @if (usuario?.tipoUsuario === 'CLIENTE') {
-    <div>
-      <h3>Área do Cliente</h3>
-      <p>Bem vindo ao IFBank</p>
-      <a routerLink="/movimentacoes">Ir para Movimentações</a>
-    </div>
+    <button (click)="abrirMovimentacao('DEPOSITO')">
+      Depositar
+    </button>
+
+    <button (click)="abrirMovimentacao('SAQUE')">
+      Sacar
+    </button>
+
+    <button (click)="abrirMovimentacao('TRANSFERENCIA')">
+      Transferir
+    </button>
+
+    <button (click)="abrirMovimentacao('INVESTIMENTO')">
+      Investir
+    </button>
   }
 
   <!-- Área do Gerente -->

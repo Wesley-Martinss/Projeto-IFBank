@@ -1,40 +1,193 @@
-<div style="padding:2rem; max-width:400px; margin:auto;">
-  <h2>Movimentações</h2>
+<div class="page">
 
-  @if (etapa === 1) {
-    <h3>Etapa 1 — Destinatário</h3>
-    <label>Chave do destinatário</label>
-    <input [(ngModel)]="chaveDestinatario" placeholder="CPF, e-mail, chave aleatória..." />
-    <button (click)="validarDestinatario()" [disabled]="carregando">
-    {{ carregando ? 'Validando...' : 'Validar' }}
-    </button>
-    @if (erro) {
-      <p style="color:red;">{{ erro }}</p>
-    }
-  }
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a class="btn-voltar" routerLink="/home">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Voltar
+      </a>
+      <div class="brand">
+        <div class="brand-icon" [ngStyle]="getIconStyle()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            @if (tipoMovimentacao === 'DEPOSITO') {
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+            }
+            @if (tipoMovimentacao === 'SAQUE') {
+              <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+            }
+            @if (tipoMovimentacao === 'TRANSFERENCIA') {
+              <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
+            }
+            @if (tipoMovimentacao === 'INVESTIMENTO') {
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+            }
+          </svg>
+        </div>
+        <span class="brand-name">{{ getTitulo() }}</span>
+      </div>
+      <div style="width:80px"></div>
+    </div>
+  </header>
 
-  @if (etapa === 2 && !sucesso) {
-    <h3>Etapa 2 — Transferência</h3>
-    <p>Destinatário: <strong>{{ dadosDestinatario?.nomeContaDestinatario }}</strong></p>
+  <main class="main-content">
+    <div class="card">
 
-    <label>ID da conta de origem</label>
-    <input type="number" [(ngModel)]="idContaOrigem" />
+      <!-- SUCESSO -->
+      @if (sucesso) {
+        <div class="sucesso-wrap">
+          <div class="sucesso-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h2 class="sucesso-titulo">{{ getTitulo() }} realizada!</h2>
+          <p class="sucesso-sub">Operação concluída com sucesso</p>
+          <a class="btn-primary" routerLink="/home">
+            Voltar ao início
+          </a>
+        </div>
+      }
 
-    <label>Valor (R$)</label>
-    <input type="number" [(ngModel)]="valor" />
+      <!-- TRANSFERÊNCIA -->
+      @if (tipoMovimentacao === 'TRANSFERENCIA' && !sucesso) {
 
-    <label>Descrição</label>
-    <input [(ngModel)]="descricao" />
+        <!-- Stepper -->
+        <div class="stepper">
+          <div class="step" [class.active]="etapa === 1" [class.done]="etapa > 1">
+            <div class="step-num">
+              @if (etapa > 1) {
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              } @else { 1 }
+            </div>
+            <span class="step-label">Destinatário</span>
+          </div>
+          <div class="step-line" [class.filled]="etapa > 1"></div>
+          <div class="step" [class.active]="etapa === 2" [class.done]="etapa > 2">
+            <div class="step-num">2</div>
+            <span class="step-label">Valores</span>
+          </div>
+        </div>
 
-   <button (click)="realizarTransferencia()" [disabled]="carregando">
-    {{ carregando ? 'Transferindo...' : 'Transferir' }}
-    </button>
-    @if (erro) {
-      <p style="color:red;">{{ erro }}</p>
-    }
-  }
+        <!-- Etapa 1 — buscar destinatário -->
+        @if (etapa === 1) {
+          @if (erro) {
+            <div class="alert-erro">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              {{ erro }}
+            </div>
+          }
+          <div class="field">
+            <label class="label">Chave do destinatário</label>
+            <input
+              class="input"
+              [(ngModel)]="chaveDestinatario"
+              placeholder="CPF, e-mail, telefone ou chave aleatória"
+              autocomplete="off"
+            />
+            <p class="field-hint">Qualquer tipo de chave PIX é aceita</p>
+          </div>
+          <button
+            class="btn-primary"
+            (click)="validarDestinatario()"
+            [disabled]="carregando">
+            @if (carregando) {
+              <span class="spinner"></span> Buscando...
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Buscar destinatário
+            }
+          </button>
+        }
 
-  @if (sucesso) {
-    <p style="color:green;">✅ Transferência realizada com sucesso!</p>
-  }
+        <!-- Etapa 2 — preencher valores -->
+        @if (etapa === 2) {
+          <div class="dest-card">
+            <div class="dest-avatar">{{ dadosDestinatario?.nomeContaDestinatario | slice:0:1 }}</div>
+            <div class="dest-info">
+              <p class="dest-nome">{{ dadosDestinatario?.nomeContaDestinatario }}</p>
+              <p class="dest-chave">{{ chaveDestinatario }}</p>
+            </div>
+            <div class="dest-check">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+          </div>
+
+          @if (erro) {
+            <div class="alert-erro">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              {{ erro }}
+            </div>
+          }
+
+          <div class="row2">
+            <div class="field">
+              <label class="label">ID conta origem</label>
+              <input class="input" type="number" [(ngModel)]="idContaOrigem" placeholder="Ex: 12345"/>
+            </div>
+            <div class="field">
+              <label class="label">Valor</label>
+              <div class="input-prefix">
+                <span class="prefix-label">R$</span>
+                <input class="input input-with-prefix" type="number" [(ngModel)]="valor" placeholder="0,00" step="0.01"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Descrição <span class="label-opt">(opcional)</span></label>
+            <input class="input" [(ngModel)]="descricao" placeholder="Para que é esta transferência?"/>
+          </div>
+
+          <button class="btn-primary" (click)="realizarMovimentacao()" [disabled]="carregando">
+            @if (carregando) {
+              <span class="spinner"></span> Processando...
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Transferir agora
+            }
+          </button>
+          <button class="btn-ghost" (click)="etapa = 1; erro = ''">Voltar</button>
+        }
+      }
+
+      <!-- DEPÓSITO / SAQUE / INVESTIMENTO -->
+      @if (tipoMovimentacao !== 'TRANSFERENCIA' && !sucesso) {
+
+        @if (erro) {
+          <div class="alert-erro">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {{ erro }}
+          </div>
+        }
+
+        <div class="row2">
+          <div class="field">
+            <label class="label">ID da conta</label>
+            <input class="input" type="number" [(ngModel)]="idContaOrigem" placeholder="Número da conta"/>
+          </div>
+          <div class="field">
+            <label class="label">Valor</label>
+            <div class="input-prefix">
+              <span class="prefix-label">R$</span>
+              <input class="input input-with-prefix" type="number" [(ngModel)]="valor" placeholder="0,00" step="0.01"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Descrição <span class="label-opt">(opcional)</span></label>
+          <input class="input" [(ngModel)]="descricao" placeholder="Motivo da operação"/>
+        </div>
+
+        <button class="btn-primary" (click)="realizarMovimentacao()" [disabled]="carregando">
+          @if (carregando) {
+            <span class="spinner"></span> Processando...
+          } @else {
+            {{ getBtnLabel() }}
+          }
+        </button>
+      }
+
+    </div>
+  </main>
+
 </div>

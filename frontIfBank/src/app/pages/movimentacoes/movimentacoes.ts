@@ -1,63 +1,156 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MovimentacaoService } from '../../services/movimentacao';
-import { MovimentacaoDTO } from '../../models/movimentacao.model';
+import { MovimentacaoDTO, TipoMovimentacao } from '../../models/movimentacao.model';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-movimentacoes',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './movimentacoes.html',
+  styleUrl: './movimentacoes.css',
+  encapsulation: ViewEncapsulation.None  // <-- só isso
 })
 export class MovimentacoesComponent {
-  etapa: number = 1;
+
+  etapa = 1;
+
   chaveDestinatario = '';
   dadosDestinatario: MovimentacaoDTO | null = null;
+
   idContaOrigem: number | null = null;
   valor: number | null = null;
   descricao = '';
+
   erro = '';
   sucesso = false;
   carregando = false;
 
+  tipoMovimentacao: TipoMovimentacao | null = null;
+
   constructor(
     private movimentacaoService: MovimentacaoService,
-    private zone: NgZone
+    private zone: NgZone,
+    private route: ActivatedRoute
   ) {}
 
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.tipoMovimentacao = params['tipo'] as TipoMovimentacao;
+    });
+  }
+
   async validarDestinatario() {
+
     if (this.carregando) return;
+
     this.carregando = true;
     this.erro = '';
-    const res = await this.movimentacaoService.validarDestinatarioDebug(this.chaveDestinatario);
+
+    const res =
+      await this.movimentacaoService.validarDestinatarioDebug(
+        this.chaveDestinatario
+      );
+
     this.zone.run(() => {
+
       if (res?.idContaDestinatario) {
         this.dadosDestinatario = res;
         this.etapa = 2;
       } else {
         this.erro = 'Destinatário não encontrado.';
       }
+
       this.carregando = false;
     });
   }
 
-  async realizarTransferencia() {
+  async realizarMovimentacao() {
+
     if (this.carregando) return;
+
     this.carregando = true;
     this.erro = '';
-    const dto: MovimentacaoDTO = {
-      chaveDestinatario: this.chaveDestinatario,
-      idContaDestinatario: this.dadosDestinatario?.idContaDestinatario,
-      nomeContaDestinatario: this.dadosDestinatario?.nomeContaDestinatario,
-      idContaOrigem: this.idContaOrigem!,
-      valor: this.valor!,
-      descricao: this.descricao,
-      tipoMovimentacao: 'TRANSFERENCIA',
-    };
-    await this.movimentacaoService.realizarMovimentacaoDebug(dto);
-    this.zone.run(() => {
-      this.sucesso = true;
-      this.carregando = false;
-    });
+
+    try {
+
+      const dto: MovimentacaoDTO = {
+        idContaOrigem: this.idContaOrigem!,
+        valor: this.valor!,
+        descricao: this.descricao,
+        tipoMovimentacao: this.tipoMovimentacao!
+      };
+
+      if (this.tipoMovimentacao === 'TRANSFERENCIA') {
+
+        dto.chaveDestinatario = this.chaveDestinatario;
+        dto.idContaDestinatario =
+          this.dadosDestinatario?.idContaDestinatario;
+
+        dto.nomeContaDestinatario =
+          this.dadosDestinatario?.nomeContaDestinatario;
+      }
+
+      await this.movimentacaoService
+        .realizarMovimentacaoDebug(dto);
+
+      this.zone.run(() => {
+        this.sucesso = true;
+        this.carregando = false;
+      });
+
+    } catch {
+
+      this.zone.run(() => {
+        this.erro = 'Erro ao realizar movimentação.';
+        this.carregando = false;
+      });
+
+    }
   }
+
+  getTitulo() {
+
+    switch (this.tipoMovimentacao) {
+
+      case 'DEPOSITO':
+        return 'Depósito';
+
+      case 'SAQUE':
+        return 'Saque';
+
+      case 'TRANSFERENCIA':
+        return 'Transferência';
+
+      case 'INVESTIMENTO':
+        return 'Investimento';
+
+      default:
+        return 'Movimentação';
+    }
+  }
+
+  // Adicione estes métodos ao MovimentacoesComponent
+
+getBtnLabel(): string {
+  switch (this.tipoMovimentacao) {
+    case 'DEPOSITO':     return 'Depositar';
+    case 'SAQUE':        return 'Sacar';
+    case 'INVESTIMENTO': return 'Investir agora';
+    default:             return 'Confirmar';
+  }
+}
+
+getIconStyle(): { [key: string]: string } {
+  const map: Record<string, { bg: string; color: string }> = {
+    DEPOSITO:      { bg: '#EAF3DE', color: '#3B6D11' },
+    SAQUE:         { bg: '#FAECE7', color: '#993C1D' },
+    TRANSFERENCIA: { bg: '#EEEDFE', color: '#534AB7' },
+    INVESTIMENTO:  { bg: '#FAEEDA', color: '#854F0B' },
+  };
+  const s = map[this.tipoMovimentacao ?? ''] ?? { bg: '#EEEDFE', color: '#534AB7' };
+  return { background: s.bg, color: s.color };
+}
 }
