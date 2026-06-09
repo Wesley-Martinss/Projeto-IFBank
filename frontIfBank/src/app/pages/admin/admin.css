@@ -1,0 +1,277 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.admin-wrapper {
+  min-height: 100vh;
+  background: #F4F4F4;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #1A1A1A;
+}
+
+/* Header */
+.admin-header {
+  background: #fff;
+  border-bottom: 3px solid #EC0000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-logo {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: #EC0000;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+
+.admin-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.admin-subtitle {
+  font-size: 0.7rem;
+  color: #9B9B9B;
+  display: block;
+}
+
+.btn-sair {
+  height: 34px;
+  padding: 0 1rem;
+  border-radius: 7px;
+  border: 1.5px solid #E0E0E0;
+  background: #fff;
+  color: #6B6B6B;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .2s, color .2s;
+}
+.btn-sair:hover { border-color: #EC0000; color: #EC0000; }
+
+/* Abas */
+.admin-tabs {
+  display: flex;
+  background: #fff;
+  border-bottom: 1px solid #EEEEEE;
+  padding: 0 2rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: #9B9B9B;
+  padding: 0.9rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .2s, border-color .2s;
+}
+.tab-btn:hover { color: #1A1A1A; }
+.tab-btn.ativa { color: #EC0000; border-bottom-color: #EC0000; font-weight: 600; }
+
+/* Conteúdo */
+.admin-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.secao-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.secao-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.btn-recarregar {
+  height: 32px;
+  padding: 0 0.85rem;
+  border-radius: 7px;
+  border: 1.5px solid #E0E0E0;
+  background: #fff;
+  color: #6B6B6B;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .2s, color .2s;
+}
+.btn-recarregar:hover { border-color: #EC0000; color: #EC0000; }
+
+.info-texto {
+  color: #9B9B9B;
+  font-size: 0.875rem;
+  padding: 3rem 0;
+  text-align: center;
+}
+
+/* Tabela */
+.tabela-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1.5px solid #EEEEEE;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 0.85rem;
+}
+
+.tabela thead th {
+  background: #F8F8F8;
+  color: #6B6B6B;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  border-bottom: 1.5px solid #EEEEEE;
+}
+
+.tabela tbody tr {
+  border-bottom: 1px solid #F4F4F4;
+  transition: background .15s;
+}
+.tabela tbody tr:last-child { border-bottom: none; }
+.tabela tbody tr:hover { background: #FFF8F8; }
+
+.tabela tbody td {
+  padding: 0.75rem 1rem;
+  color: #6B6B6B;
+  white-space: nowrap;
+}
+
+.tabela tbody td:first-child { color: #1A1A1A; font-weight: 500; }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.badge-tipo { background: #F0F0FF; color: #3B5BDB; }
+
+.badge-status-ATIVA              { background: #E8F8F2; color: #1A7F52; }
+.badge-status-PENDENTE_APROVACAO { background: #FFFBEC; color: #92600A; }
+.badge-status-BLOQUEADA          { background: #FFF0F0; color: #C80000; }
+.badge-status-ENCERRADA          { background: #F4F4F4; color: #6B6B6B; }
+
+.badge-ativa   { background: #E8F8F2; color: #1A7F52; }
+.badge-inativa { background: #FFF0F0; color: #C80000; }
+
+.badge-mov-DEPOSITO      { background: #E8F8F2; color: #1A7F52; }
+.badge-mov-SAQUE         { background: #FFF0F0; color: #C80000; }
+.badge-mov-TRANSFERENCIA { background: #F0F4FF; color: #3B5BDB; }
+.badge-mov-INVESTIMENTO  { background: #FFFBEC; color: #92600A; }
+
+/* Formulário */
+.form-card {
+  background: #fff;
+  border: 1.5px solid #EEEEEE;
+  border-radius: 14px;
+  padding: 2rem;
+  max-width: 440px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.1rem;
+}
+
+.form-grupo label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.form-grupo input {
+  height: 44px;
+  padding: 0 13px;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 8px;
+  color: #1A1A1A;
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.form-grupo input::placeholder { color: #BEBEBE; }
+
+.form-grupo input:focus {
+  border-color: #EC0000;
+  box-shadow: 0 0 0 3px rgba(236,0,0,0.1);
+}
+
+.btn-criar {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: #EC0000;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background .2s;
+}
+
+.btn-criar:hover:not(:disabled) { background: #C80000; }
+.btn-criar:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.msg-sucesso {
+  background: #E8F8F2;
+  border: 1.5px solid #A8E6C8;
+  color: #1A7F52;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.msg-erro {
+  background: #FFF0F0;
+  border: 1.5px solid #FFCCCC;
+  color: #C80000;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}

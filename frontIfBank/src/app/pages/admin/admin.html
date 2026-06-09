@@ -1,0 +1,196 @@
+<div class="admin-wrapper">
+
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="admin-header-left">
+      <span class="admin-logo">🏦</span>
+      <div>
+        <h1 class="admin-title">IFSPBank</h1>
+        <span class="admin-subtitle">Painel Administrativo</span>
+      </div>
+    </div>
+    <button class="btn-sair" (click)="sair()">Sair</button>
+  </header>
+
+  <!-- Abas -->
+  <nav class="admin-tabs">
+    <button
+      class="tab-btn"
+      [class.ativa]="abaAtiva === 'contas'"
+      (click)="mudarAba('contas')"
+    >
+      Contas
+    </button>
+    <button
+      class="tab-btn"
+      [class.ativa]="abaAtiva === 'transacoes'"
+      (click)="mudarAba('transacoes')"
+    >
+      Transações
+    </button>
+    <button
+      class="tab-btn"
+      [class.ativa]="abaAtiva === 'gerentes'"
+      (click)="mudarAba('gerentes')"
+    >
+      Gerentes
+    </button>
+  </nav>
+
+  <!-- Conteúdo -->
+  <main class="admin-content">
+
+    <!-- ABA: Contas -->
+    @if (abaAtiva === 'contas') {
+      <section>
+        <div class="secao-header">
+          <h2>Listagem de Contas</h2>
+          <button class="btn-recarregar" (click)="carregarContas()">↻ Atualizar</button>
+        </div>
+
+        @if (carregandoContas) {
+          <p class="info-texto">Carregando contas...</p>
+        } @else if (contas.length === 0) {
+          <p class="info-texto">Nenhuma conta cadastrada.</p>
+        } @else {
+          <div class="tabela-wrapper">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Titular</th>
+                  <th>E-mail</th>
+                  <th>Nº Conta</th>
+                  <th>Agência</th>
+                  <th>Tipo</th>
+                  <th>Saldo</th>
+                  <th>Status</th>
+                  <th>Situação</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (conta of contas; track conta.id) {
+                  <tr>
+                    <td>{{ conta.nomeTitular }}</td>
+                    <td>{{ conta.emailTitular }}</td>
+                    <td>{{ conta.numeroConta }}</td>
+                    <td>{{ conta.agencia }}</td>
+                    <td>
+                      <span class="badge badge-tipo">{{ conta.tipoUsuario }}</span>
+                    </td>
+                    <td>{{ formatarValor(conta.saldo) }}</td>
+                    <td>
+                      <span class="badge" [class]="'badge-status-' + conta.statusConta">
+                        {{ conta.statusConta }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge" [class]="conta.ativa ? 'badge-ativa' : 'badge-inativa'">
+                        {{ conta.ativa ? 'Ativa' : 'Inativa' }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ABA: Transações -->
+    @if (abaAtiva === 'transacoes') {
+      <section>
+        <div class="secao-header">
+          <h2>Histórico Geral de Transações</h2>
+          <button class="btn-recarregar" (click)="carregarMovimentacoes()">↻ Atualizar</button>
+        </div>
+
+        @if (carregandoMovimentacoes) {
+          <p class="info-texto">Carregando transações...</p>
+        } @else if (movimentacoes.length === 0) {
+          <p class="info-texto">Nenhuma transação registrada.</p>
+        } @else {
+          <div class="tabela-wrapper">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Data / Hora</th>
+                  <th>Tipo</th>
+                  <th>Valor</th>
+                  <th>Conta Origem</th>
+                  <th>Titular Origem</th>
+                  <th>Conta Destino</th>
+                  <th>Titular Destino</th>
+                  <th>Descrição</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (mov of movimentacoes; track mov.id) {
+                  <tr>
+                    <td>{{ mov.id }}</td>
+                    <td>{{ formatarData(mov.dataMovimentacao) }}</td>
+                    <td>
+                      <span class="badge" [class]="'badge-mov-' + mov.tipoMovimentacao">
+                        {{ mov.tipoMovimentacao }}
+                      </span>
+                    </td>
+                    <td>{{ formatarValor(mov.valor) }}</td>
+                    <td>{{ mov.numeroContaOrigem ?? '—' }}</td>
+                    <td>{{ mov.nomeTitularOrigem ?? '—' }}</td>
+                    <td>{{ mov.numeroContaDestino ?? '—' }}</td>
+                    <td>{{ mov.nomeTitularDestino ?? '—' }}</td>
+                    <td>{{ mov.descricao ?? '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ABA: Gerentes -->
+    @if (abaAtiva === 'gerentes') {
+      <section>
+        <div class="secao-header">
+          <h2>Criar Conta de Gerente</h2>
+        </div>
+
+        <div class="form-card">
+          @if (mensagemGerente) {
+            <p class="msg-sucesso">✓ {{ mensagemGerente }}</p>
+          }
+          @if (erroGerente) {
+            <p class="msg-erro">✗ {{ erroGerente }}</p>
+          }
+
+          <div class="form-grupo">
+            <label>Nome completo</label>
+            <input type="text" [(ngModel)]="novoGerente.nome" placeholder="Nome do gerente" />
+          </div>
+
+          <div class="form-grupo">
+            <label>E-mail</label>
+            <input type="email" [(ngModel)]="novoGerente.email" placeholder="email@exemplo.com" />
+          </div>
+
+          <div class="form-grupo">
+            <label>CPF</label>
+            <input type="text" [(ngModel)]="novoGerente.cpf" placeholder="000.000.000-00" />
+          </div>
+
+          <div class="form-grupo">
+            <label>Senha</label>
+            <input type="password" [(ngModel)]="novoGerente.senha" placeholder="Senha de acesso" />
+          </div>
+
+          <button class="btn-criar" (click)="submeterGerente()" [disabled]="criandoGerente">
+            {{ criandoGerente ? 'Criando...' : 'Criar Gerente' }}
+          </button>
+        </div>
+      </section>
+    }
+
+  </main>
+</div>

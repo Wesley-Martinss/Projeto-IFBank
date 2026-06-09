@@ -1,63 +1,94 @@
-<div style="padding: 2rem">
-  <div>
-    <!-- Cabeçalho de boas vindas -->
-    <h2>Olá, {{ usuario?.nome }}!</h2>
-    <span>{{ usuario?.tipoUsuario }}</span>
-    <button (click)="sair()">Sair</button>
-  </div>
+<div class="home-page">
 
-  <!-- Área Cliente -->
-  @if (usuario?.tipoUsuario === 'CLIENTE') {
-    <button (click)="abrirMovimentacao('DEPOSITO')">
-      Depositar
-    </button>
-
-    <button (click)="abrirMovimentacao('SAQUE')">
-      Sacar
-    </button>
-
-    <button (click)="abrirMovimentacao('TRANSFERENCIA')">
-      Transferir
-    </button>
-
-    <button (click)="abrirMovimentacao('INVESTIMENTO')">
-      Investir
-    </button>
-  }
-
-  <!-- Área do Gerente -->
-  @if (usuario?.tipoUsuario === 'GERENTE') {
-    <div>
-      <!-- Mensagem de sucesso -->
-      @if (mensagemSucesso) {
-        <p>{{ mensagemSucesso }}</p>
-      }
-
-      <!-- Lista de contas pendentes -->
-      @if (pendentes.length === 0) {
-        <p>Nenhuma solicitação pendente!</p>
-      } @else {
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (p of pendentes; track p.id) {
-              <tr>
-                <td>{{ p.nome }}</td>
-                <td>{{ p.email }}</td>
-                <td>
-                  <button (click)="aprovar(p.id)" [disabled]="carregando">Aprovar</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      }
+  <!-- Header -->
+  <header class="home-header">
+    <div class="header-brand">
+      <div class="header-logo">🏦</div>
+      <span class="header-name">IFSPBank</span>
     </div>
-  }
+    <div class="header-right">
+      <span class="badge-tipo" [class.gerente]="usuario?.tipoUsuario === 'GERENTE'">
+        {{ usuario?.tipoUsuario }}
+      </span>
+      <button class="btn-sair" (click)="sair()">Sair</button>
+    </div>
+  </header>
+
+  <main class="home-main">
+
+    <!-- Boas vindas -->
+    <div class="welcome-section">
+      <p class="welcome-hi">Olá,</p>
+      <h2 class="welcome-name">{{ usuario?.nome }}</h2>
+    </div>
+
+    <!-- CLIENTE -->
+    @if (usuario?.tipoUsuario === 'CLIENTE') {
+      <p class="actions-title">O que deseja fazer?</p>
+      <div class="actions-grid">
+
+        <button class="action-card deposito" (click)="abrirMovimentacao('DEPOSITO')">
+          <div class="card-icon-wrap">💰</div>
+          <span class="card-label">Depositar</span>
+          <span class="card-desc">Adicionar saldo</span>
+        </button>
+
+        <button class="action-card saque" (click)="abrirMovimentacao('SAQUE')">
+          <div class="card-icon-wrap">💸</div>
+          <span class="card-label">Sacar</span>
+          <span class="card-desc">Retirar dinheiro</span>
+        </button>
+
+        <button class="action-card transf" (click)="abrirMovimentacao('TRANSFERENCIA')">
+          <div class="card-icon-wrap">🔄</div>
+          <span class="card-label">Transferir</span>
+          <span class="card-desc">Enviar via PIX</span>
+        </button>
+
+        <button class="action-card invest" (click)="abrirMovimentacao('INVESTIMENTO')">
+          <div class="card-icon-wrap">📈</div>
+          <span class="card-label">Investir</span>
+          <span class="card-desc">Fazer render</span>
+        </button>
+
+      </div>
+    }
+
+    <!-- GERENTE -->
+    @if (usuario?.tipoUsuario === 'GERENTE') {
+      <div class="section-header">
+        <span class="section-title">Solicitações Pendentes</span>
+        @if (pendentes.length > 0) {
+          <span class="badge-count">{{ pendentes.length }}</span>
+        }
+      </div>
+
+      @if (mensagemSucesso) {
+        <div class="msg-sucesso">✓ {{ mensagemSucesso }}</div>
+      }
+
+      @if (pendentes.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">✅</div>
+          <p>Nenhuma solicitação pendente</p>
+        </div>
+      } @else {
+        <div class="pendentes-list">
+          @for (p of pendentes; track p.id) {
+            <div class="pendente-card">
+              <div class="pendente-avatar">{{ p.nome | slice:0:1 }}</div>
+              <div class="pendente-info">
+                <p class="pendente-nome">{{ p.nome }}</p>
+                <p class="pendente-email">{{ p.email }}</p>
+              </div>
+              <button class="btn-aprovar" (click)="aprovar(p.id)" [disabled]="carregando">
+                Aprovar
+              </button>
+            </div>
+          }
+        </div>
+      }
+    }
+
+  </main>
 </div>

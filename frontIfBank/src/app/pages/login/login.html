@@ -1,35 +1,49 @@
-<div
-  style="
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    gap: 1rem;
-    max-width: 300px;
-    margin: auto;
-  "
->
-  <h1>IfBank</h1>
+<div class="login-page">
 
-  <input type="email" placeholder="E-mail" [(ngModel)]="email" />
-  <input type="password" placeholder="Senha" [(ngModel)]="senha" />
-
-  <button (click)="entrar()" [disabled]="carregando">
-    <!-- disabled desabilita o botão enquanto carrega -->
-    {{ carregando ? 'Entrando...' : 'Login' }}
-  </button>
-
-  @if (erro) {
-    <p style="color: red">{{ erro }}</p>
-  }
-
-  <div style="margin-top: 15px">
-    <p>
-      Não tem uma conta?
-      <a routerLink="/cadastro" style="cursor: pointer; color: blue; text-decoration: underline"
-        >Cadastre-se aqui</a
-      >
-    </p>
+  <!-- Painel esquerdo (visível em telas largas) -->
+  <div class="login-side">
+    <div class="side-circle side-circle-1"></div>
+    <div class="side-circle side-circle-2"></div>
+    <div class="side-logo">🏦</div>
+    <h1 class="side-brand">IFSPBank</h1>
+    <p class="side-tagline">Segurança e praticidade<br>para o seu dia a dia</p>
   </div>
+
+  <!-- Formulário -->
+  <div class="login-main">
+    <div class="login-card">
+
+      <!-- Logo mobile -->
+      <div class="card-logo-mobile">
+        <div class="card-logo-icon">🏦</div>
+        <span class="card-logo-name">IFSPBank</span>
+      </div>
+
+      <h2 class="login-heading">Bem-vindo de volta</h2>
+      <p class="login-sub">Acesse sua conta</p>
+
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" placeholder="seu@email.com" [(ngModel)]="email" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" placeholder="••••••••" [(ngModel)]="senha" (keyup.enter)="entrar()" />
+      </div>
+
+      @if (erro) {
+        <div class="alert-erro">{{ erro }}</div>
+      }
+
+      <button class="btn-entrar" (click)="entrar()" [disabled]="carregando">
+        {{ carregando ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <p class="cadastro-link">
+        Não tem conta? <a routerLink="/cadastro">Criar agora</a>
+      </p>
+    </div>
+  </div>
+
 </div>

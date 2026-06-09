@@ -1,30 +1,75 @@
-<form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
-  <label for="nome">Nome:</label>
-  <input id="nome" type="text" formControlName="nome" />
+<div class="cadastro-page">
 
-  <label for="email">Email:</label>
-  <input id="email" type="email" formControlName="email" />
+  <!-- Painel esquerdo -->
+  <div class="cadastro-side">
+    <div class="side-circle side-circle-1"></div>
+    <div class="side-circle side-circle-2"></div>
+    <div class="side-logo">🏦</div>
+    <h1 class="side-brand">IFSPBank</h1>
+    <p class="side-tagline">Sua conta bancária<br>pronta em minutos</p>
+  </div>
 
-  <label for="senha">Senha:</label>
-  <input id="senha" type="password" formControlName="senha" />
+  <!-- Formulário -->
+  <div class="cadastro-main">
+    <div class="cadastro-card">
 
-  <label for="cpf">CPF:</label>
-  <input id="cpf" type="text" formControlName="cpf" />
+      <div class="card-logo-mobile">
+        <div class="card-logo-icon">🏦</div>
+        <span class="card-logo-name">IFSPBank</span>
+      </div>
 
-  <label for="dataNascimento">Data de Nascimento:</label>
-  <input id="dataNascimento" type="datetime-local" formControlName="dataNascimento" />
+      <h2 class="cadastro-heading">Criar conta</h2>
+      <p class="cadastro-sub">Preencha seus dados para começar</p>
 
-  <label for="endereco">Endereço:</label>
-  <input id="endereco" type="text" formControlName="endereco" />
+      <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
 
-  <label for="telefone">Telefone:</label>
-  <input id="telefone" type="text" formControlName="telefone" />
+        <div class="field">
+          <label>Nome completo</label>
+          <input type="text" formControlName="nome" placeholder="Seu nome completo" />
+        </div>
 
-  <label for="tipoUsuario">Tipo de Usuário:</label>
-  <select id="tipoUsuario" formControlName="tipoUsuario">
-    <option value="CLIENTE">Cliente</option>
-    <option value="GERENTE">Gerente</option>
-  </select>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" formControlName="email" placeholder="seu@email.com" />
+        </div>
 
-  <button type="submit">Cadastrar</button>
-</form>
+        <div class="field-row">
+          <div class="field">
+            <label>Senha</label>
+            <input type="password" formControlName="senha" placeholder="••••••••" />
+          </div>
+          <div class="field">
+            <label>CPF</label>
+            <input type="text" formControlName="cpf" placeholder="000.000.000-00" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Data de nascimento</label>
+            <input type="date" formControlName="dataNascimento" />
+          </div>
+          <div class="field">
+            <label>Telefone</label>
+            <input type="text" formControlName="telefone" placeholder="(11) 99999-9999" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Endereço</label>
+          <input type="text" formControlName="endereco" placeholder="Rua, número, cidade" />
+        </div>
+
+        <button type="submit" class="btn-cadastrar" [disabled]="cadastroForm.invalid">
+          Criar conta
+        </button>
+
+        <p class="login-link">
+          Já tem conta? <a routerLink="/login">Entrar</a>
+        </p>
+
+      </form>
+    </div>
+  </div>
+
+</div>

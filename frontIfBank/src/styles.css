@@ -1,1 +1,46 @@
-/* You can add global styles to this file, and also import other style files */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #F4F4F4;
+  color: #1A1A1A;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+:root {
+  --font-sans: 'Segoe UI', system-ui, sans-serif;
+
+  --red:        #EC0000;
+  --red-dark:   #C80000;
+  --red-light:  #FFF0F0;
+  --red-border: #FFCCCC;
+
+  --bg:         #F4F4F4;
+  --white:      #FFFFFF;
+  --text:       #1A1A1A;
+  --text-sec:   #6B6B6B;
+  --text-muted: #9B9B9B;
+  --border:     #E0E0E0;
+  --border-sec: #EEEEEE;
+  --shadow:     rgba(0, 0, 0, 0.08);
+  --shadow-md:  rgba(0, 0, 0, 0.14);
+
+  /* Variáveis usadas pelo movimentacoes.css */
+  --color-background-primary:   #FFFFFF;
+  --color-background-secondary: #F4F4F4;
+  --color-background-tertiary:  #F4F4F4;
+  --color-border-primary:       #D0D0D0;
+  --color-border-secondary:     #E0E0E0;
+  --color-border-tertiary:      #EEEEEE;
+  --color-text-primary:         #1A1A1A;
+  --color-text-secondary:       #6B6B6B;
+  --color-text-tertiary:        #9B9B9B;
+  --color-text-danger:          #C80000;
+  --color-background-danger:    #FFF0F0;
+  --color-border-danger:        #FFCCCC;
+}

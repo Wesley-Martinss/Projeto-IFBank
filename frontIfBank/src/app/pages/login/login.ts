@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [FormsModule, RouterLink], // Adicionado FormsModule para usar [(ngModel)]
   templateUrl: './login.html',
+  styleUrl: './login.css',
 })
 export class LoginComponent {
   email = '';
