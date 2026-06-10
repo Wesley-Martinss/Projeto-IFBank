@@ -1,4 +1,4 @@
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioDTO } from '../../models/usuario.model';
 import { CommonModule } from '@angular/common';
@@ -8,8 +8,9 @@ import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [CommonModule],
   templateUrl: './home.html',
+  styleUrl: './home.css',
 })
 export class HomeComponent implements OnInit {
   usuario: UsuarioDTO | null = null;
@@ -32,6 +33,12 @@ export class HomeComponent implements OnInit {
     // Se não tiver usuário logado, joga de volta pro Login
     if (!this.usuario) {
       this.router.navigate(['/login']);
+      return;
+    }
+
+    // Admin vai para o painel administrativo
+    if (this.usuario.tipoUsuario === 'ADMIN') {
+      this.router.navigate(['/admin']);
       return;
     }
 

@@ -113,16 +113,16 @@
 }
 
 .step.active .step-num {
-  background: #534AB7;
+  background: #EC0000;
   color: #fff;
-  border-color: #534AB7;
-  box-shadow: 0 0 0 3px rgba(83,74,183,.15);
+  border-color: #EC0000;
+  box-shadow: 0 0 0 3px rgba(236,0,0,.15);
 }
 
 .step.done .step-num {
-  background: #534AB7;
+  background: #EC0000;
   color: #fff;
-  border-color: #534AB7;
+  border-color: #EC0000;
 }
 
 .step-label {
@@ -142,7 +142,7 @@
   transition: background .3s;
 }
 
-.step-line.filled { background: #534AB7; opacity: .4; }
+.step-line.filled { background: #EC0000; opacity: .4; }
 
 /* ---- Destinatário card ---- */
 .dest-card {
@@ -160,8 +160,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #EEEDFE;
-  color: #534AB7;
+  background: #FFF0F0;
+  color: #EC0000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,9 +244,9 @@
 }
 
 .input:focus {
-  border-color: #534AB7;
+  border-color: #EC0000;
   background: var(--color-background-primary);
-  box-shadow: 0 0 0 3px rgba(83,74,183,.1);
+  box-shadow: 0 0 0 3px rgba(236,0,0,.1);
 }
 
 .input-prefix { position: relative; }
@@ -281,7 +281,7 @@
   height: 44px;
   border-radius: 8px;
   border: none;
-  background: #534AB7;
+  background: #EC0000;
   color: #fff;
   font-size: 14px;
   font-weight: 500;
@@ -296,7 +296,7 @@
   text-decoration: none;
 }
 
-.btn-primary:hover:not(:disabled) { background: #3C3489; }
+.btn-primary:hover:not(:disabled) { background: #C80000; }
 
 .btn-primary:disabled {
   background: var(--color-background-tertiary);
