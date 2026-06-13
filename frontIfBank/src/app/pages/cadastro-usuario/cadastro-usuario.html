@@ -60,6 +60,22 @@
           <input type="text" formControlName="endereco" placeholder="Rua, número, cidade" />
         </div>
 
+      <!-- ✅ ADICIONAR antes do botão submit -->
+        <div class="field">
+          <label>Foto de perfil</label>
+          <div class="foto-upload" (click)="fotoInput.click()">
+            <img *ngIf="fotoPreview" [src]="fotoPreview" class="foto-preview" alt="Preview" />
+            <div *ngIf="!fotoPreview" class="foto-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#aaa" viewBox="0 0 24 24">
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12Zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8Z"/>
+              </svg>
+              <span>Clique para adicionar foto</span>
+            </div>
+            <div *ngIf="fotoPreview" class="foto-trocar">Trocar foto</div>
+          </div>
+          <input #fotoInput type="file" accept="image/*" style="display:none" (change)="onFotoSelecionada($event)" />
+        </div>
+
         <button type="submit" class="btn-cadastrar" [disabled]="cadastroForm.invalid">
           Criar conta
         </button>

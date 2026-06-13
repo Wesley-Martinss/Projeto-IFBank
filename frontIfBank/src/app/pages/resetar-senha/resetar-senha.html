@@ -1,0 +1,59 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">🏦</div>
+    <h2 class="auth-title">Redefinir Senha</h2>
+
+    @if (tokenInvalido) {
+      <div class="msg-erro">❌ Link inválido ou expirado. Solicite um novo.</div>
+      <button class="btn-link" (click)="irParaEsqueci()">← Solicitar novo link</button>
+    }
+
+    @if (!tokenInvalido && !concluido) {
+      <div class="form-group">
+        <label>Senha atual</label>
+        <input
+          type="password"
+          [(ngModel)]="senhaAtual"
+          placeholder="Digite sua senha atual"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Nova senha</label>
+        <input
+          type="password"
+          [(ngModel)]="novaSenha"
+          placeholder="Mínimo 6 caracteres"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Confirmar nova senha</label>
+        <input
+          type="password"
+          [(ngModel)]="confirmarSenha"
+          placeholder="Repita a nova senha"
+          class="form-input"
+        />
+      </div>
+
+      @if (erro) {
+        <div class="msg-erro">❌ {{ erro }}</div>
+      }
+
+      <button class="btn-primary" (click)="redefinir()" [disabled]="carregando">
+        {{ carregando ? 'Salvando...' : 'Confirmar nova senha' }}
+      </button>
+    }
+
+    @if (concluido) {
+      <div class="sucesso-box">
+        <div class="sucesso-icon">✅</div>
+        <p>Senha alterada com sucesso!</p>
+        <p class="sucesso-sub">Redirecionando para o login...</p>
+      </div>
+    }
+  </div>
+</div>

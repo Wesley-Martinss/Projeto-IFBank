@@ -2,17 +2,38 @@
 
   <!-- Header -->
   <header class="home-header">
-    <div class="header-brand">
-      <div class="header-logo">🏦</div>
-      <span class="header-name">IFSPBank</span>
-    </div>
-    <div class="header-right">
-      <span class="badge-tipo" [class.gerente]="usuario?.tipoUsuario === 'GERENTE'">
-        {{ usuario?.tipoUsuario }}
-      </span>
-      <button class="btn-sair" (click)="sair()">Sair</button>
-    </div>
-  </header>
+
+  <!-- LOGO - esquerda -->
+  <div class="header-brand">
+    <div class="header-logo">🏦</div>
+    <span class="header-name">IFSPBank</span>
+  </div>
+
+  <!-- DIREITA -->
+  <div class="header-right">
+    <span class="badge-tipo" [class.gerente]="usuario?.tipoUsuario === 'GERENTE'">
+      {{ usuario?.tipoUsuario }}
+    </span>
+
+   <!-- Foto -->
+  <div class="header-avatar" (click)="triggerFotoInput()">
+    <img *ngIf="foto" [src]="foto" alt="Foto" class="avatar-img" />
+    <span *ngIf="!foto" class="avatar-sem-foto">+ Foto</span>
+  </div>
+
+    <button class="btn-senha" (click)="alterarSenha()">Trocar Senha</button>
+    <button class="btn-sair" (click)="sair()">Sair</button>
+  </div>
+
+  <input
+    type="file"
+    #fotoInput
+    accept="image/*"
+    style="display:none"
+    (change)="onFotoSelecionada($event)"
+  />
+
+</header>
 
   <main class="home-main">
 

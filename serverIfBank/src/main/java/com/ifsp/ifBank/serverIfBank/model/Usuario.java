@@ -5,6 +5,7 @@ import com.ifsp.ifBank.serverIfBank.model.enuns.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class Usuario {
     private String email;
 
     private LocalDateTime dataCadastro;
-    private LocalDateTime dataNascimento;
+    private LocalDate dataNascimento;
     private String endereco;
     private String telefone;
 
@@ -37,5 +38,15 @@ public class Usuario {
     private StatusConta statusConta;
 
     private boolean ativo;
+
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
+    @Column(name = "foto", columnDefinition = "LONGTEXT")
+    private String foto;
 
 }

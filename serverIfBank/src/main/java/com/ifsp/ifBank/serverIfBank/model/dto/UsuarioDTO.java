@@ -11,5 +11,7 @@ public class UsuarioDTO {
 
     private String email;
 
+    private String foto;
+
     private TipoUsuario tipoUsuario;
 }

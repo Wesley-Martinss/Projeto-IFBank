@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioDTO } from '../../models/usuario.model';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 
 
 @Component({
@@ -17,6 +17,9 @@ export class HomeComponent implements OnInit {
   pendentes: UsuarioDTO[] = [];
   carregando = false;
   mensagemSucesso = '';
+  foto: string = '';
+  @ViewChild('fotoInput') fotoInput!: ElementRef<HTMLInputElement>;
+
 
   constructor(
     private authService: AuthService,
@@ -29,6 +32,11 @@ export class HomeComponent implements OnInit {
     // 1. Pega o usuário logado
     this.usuario = this.authService.getUsuarioLogado();
     console.log('1. Usuário Logado:', this.usuario);
+
+    if (this.usuario?.foto) {
+      this.foto = this.usuario.foto;
+    }
+
 
     // Se não tiver usuário logado, joga de volta pro Login
     if (!this.usuario) {
@@ -47,6 +55,30 @@ export class HomeComponent implements OnInit {
       this.carregarPendentes();
     }
   }
+
+  triggerFotoInput() {
+  this.fotoInput.nativeElement.click();
+}
+
+async onFotoSelecionada(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (!input.files || !input.files[0] || !this.usuario) return;
+
+  const resultado = await this.authService.uploadFoto(this.usuario.id, input.files[0]);
+
+  if (resultado.sucesso && resultado.foto) {
+    this.foto = resultado.foto;
+
+    // Atualiza o localStorage
+    const atualizado = { ...this.usuario, foto: resultado.foto };
+    localStorage.setItem('usuarioLogado', JSON.stringify(atualizado));
+    this.usuario = atualizado;
+    this.cdr.detectChanges();
+  } else {
+    alert('❌ Erro: ' + resultado.erro);
+  }
+}
+
 
   async carregarPendentes() {
     const listarPendentes = await this.authService.listarPendentes();
@@ -83,6 +115,18 @@ export class HomeComponent implements OnInit {
   sair() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+ 
+  alterarSenha() {
+    if (!this.usuario?.email) return;
+
+    this.authService.esqueceuSenha(this.usuario.email).then(resultado => {
+      if (resultado.sucesso) {
+        alert('📧 E-mail enviado para ' + this.usuario?.email + '!\nVerifique sua caixa de entrada.');
+      } else {
+        alert('❌ Erro ao enviar e-mail: ' + resultado.erro);
+      }
+    });
   }
 
   abrirMovimentacao(tipo: string) {

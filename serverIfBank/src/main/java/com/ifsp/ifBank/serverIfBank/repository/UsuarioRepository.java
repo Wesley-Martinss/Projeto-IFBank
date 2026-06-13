@@ -11,5 +11,7 @@ import com.ifsp.ifBank.serverIfBank.model.enuns.StatusConta;
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByEmailAndSenha(String email, String senha);
     List<Usuario> findByStatusConta(StatusConta statusConta);
+    Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findByResetToken(String resetToken);
 
 }
