@@ -4,6 +4,7 @@ package com.ifsp.ifBank.serverIfBank.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ifsp.ifBank.serverIfBank.security.JwtService;
 import org.springframework.stereotype.Service;
 
 import com.ifsp.ifBank.serverIfBank.model.Usuario;
@@ -24,6 +25,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
     private final ContaService contaService;
+    private final JwtService jwtService;
 
 
     public List<UsuarioDTO> todosOsUsuariosDTOS() {
@@ -34,15 +36,22 @@ public class UsuarioService {
                 .toList();
     }
 
+
     public UsuarioDTO login(LoginDTO loginDTO) {
         Usuario usuario = usuarioRepository.findByEmailAndSenha(loginDTO.getEmail(), loginDTO.getSenha())
-            .orElseThrow(() -> new RuntimeException("E-mail ou senha incorretos!"));
-            
+                .orElseThrow(() -> new RuntimeException("E-mail ou senha incorretos!"));
+
         if (usuario.getStatusConta() != StatusConta.ATIVA) {
             throw new RuntimeException("Conta não está ativa!");
         }
-        
-        return usuarioMapper.toDTO(usuario);
+
+        UsuarioDTO dto = usuarioMapper.toDTO(usuario);
+
+        String token = jwtService.gerarToken(usuario.getId(), usuario.getEmail(), usuario.getTipoUsuario().name(), usuario.getNome());
+        dto.setToken(token);
+        dto.setFoto(usuario.getFoto());
+
+        return dto;
     }
 
     public UsuarioDTO cadastrar (Usuario usuario){

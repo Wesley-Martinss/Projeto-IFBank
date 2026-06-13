@@ -5,6 +5,7 @@ import { MovimentacaoDTO, TipoMovimentacao } from '../../models/movimentacao.mod
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-movimentacoes',
@@ -30,9 +31,12 @@ export class MovimentacoesComponent {
   carregando = false;
 
   tipoMovimentacao: TipoMovimentacao | null = null;
-
+private getToken() {
+  return localStorage.getItem('token');
+}
   constructor(
     private movimentacaoService: MovimentacaoService,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute
   ) {}
@@ -46,15 +50,20 @@ export class MovimentacoesComponent {
 }
 
 private async carregarContaOrigem() {
-  const usuario = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
-  console.log('usuario do localStorage:', usuario);
+  const usuario = this.authService.getUsuarioLogado();
 
   if (usuario?.id) {
-    const res = await fetch(`http://localhost:8080/contas/por-usuario/${usuario.id}`);
-    console.log('status da conta:', res.status);
+    const res = await fetch(
+      `http://localhost:8080/contas/por-usuario/${usuario.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.getToken()}`
+        }
+      }
+    );
+
     if (res.ok) {
       const conta = await res.json();
-      console.log('conta:', conta);
       this.idContaOrigem = conta.id;
       this.cdr.markForCheck();
     }

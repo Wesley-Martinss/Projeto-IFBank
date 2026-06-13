@@ -28,9 +28,17 @@ export interface MovimentacaoAdmin {
 export class AdminService {
   private api = 'http://localhost:8080/admin';
 
+  private getToken() {
+    return localStorage.getItem('token');
+  }
+
   async listarContas(): Promise<ContaAdmin[]> {
     try {
-      const res = await fetch(`${this.api}/contas`);
+      const res = await fetch(`${this.api}/contas`, {
+        headers: {
+          Authorization: `Bearer ${this.getToken()}`
+        }
+      });
       return res.ok ? res.json() : [];
     } catch {
       return [];
@@ -39,7 +47,11 @@ export class AdminService {
 
   async listarMovimentacoes(): Promise<MovimentacaoAdmin[]> {
     try {
-      const res = await fetch(`${this.api}/movimentacoes`);
+      const res = await fetch(`${this.api}/movimentacoes`, {
+        headers: {
+          Authorization: `Bearer ${this.getToken()}`
+        }
+      });
       return res.ok ? res.json() : [];
     } catch {
       return [];
@@ -55,7 +67,10 @@ export class AdminService {
     try {
       const res = await fetch(`${this.api}/gerentes`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.getToken()}`
+        },
         body: JSON.stringify(dados),
       });
       if (res.ok) return { sucesso: true };

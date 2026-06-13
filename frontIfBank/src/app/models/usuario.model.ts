@@ -4,4 +4,5 @@ export interface UsuarioDTO {
   email: string;
   tipoUsuario: 'CLIENTE' | 'GERENTE' | 'ADMIN';
   foto: string;
+  token: string
 }

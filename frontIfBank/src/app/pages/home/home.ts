@@ -34,8 +34,8 @@ export class HomeComponent implements OnInit {
     console.log('1. Usuário Logado:', this.usuario);
 
     if (this.usuario?.foto) {
-      this.foto = this.usuario.foto;
-    }
+        this.foto = this.authService.getFoto?.() || localStorage.getItem('foto') || '';  
+  }
 
 
     // Se não tiver usuário logado, joga de volta pro Login

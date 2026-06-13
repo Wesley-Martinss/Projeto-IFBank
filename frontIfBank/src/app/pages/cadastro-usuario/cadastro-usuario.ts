@@ -44,7 +44,7 @@ export class CadastroUsuario {
   onSubmit() {
     const usuario = {
       ...this.cadastroForm.value,
-      foto: this.fotoBase64 || null  // ✅ envia a foto junto
+      foto: this.fotoBase64 || null  
     };
 
     this.usuarioServer.cadastrarUsuario(usuario).subscribe({

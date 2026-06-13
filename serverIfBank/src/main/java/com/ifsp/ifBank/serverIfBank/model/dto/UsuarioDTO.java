@@ -14,4 +14,6 @@ public class UsuarioDTO {
     private String foto;
 
     private TipoUsuario tipoUsuario;
+
+    private String token;
 }
