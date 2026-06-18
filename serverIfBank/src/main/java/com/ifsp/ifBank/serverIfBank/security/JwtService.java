@@ -44,7 +44,7 @@ public class JwtService {
     }
 
     public String extrairRole(String token) {
-        return getClaims(token).get("role", String.class);
+        return getClaims(token).get("tipoUsuario", String.class);
     }
 
     public Integer extrairId(String token) {

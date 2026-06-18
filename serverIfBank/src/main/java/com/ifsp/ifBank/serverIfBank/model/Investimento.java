@@ -1,7 +1,5 @@
 package com.ifsp.ifBank.serverIfBank.model;
 
-
-import com.ifsp.ifBank.serverIfBank.model.enuns.TipoInvestimento;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,18 +19,19 @@ public class Investimento {
     @JoinColumn(name = "conta_id")
     private Conta conta;
 
-    @Enumerated(EnumType.STRING)
-    private TipoInvestimento tipoInvestimento;
+    @ManyToOne
+    @JoinColumn(name = "produto_id")
+    private ProdutoInvestimento produto;
 
     private BigDecimal valorInvestido;
 
     private BigDecimal rendimento;
-
-    private Integer duracaoDias;
 
     private LocalDateTime dataInicio;
 
     private LocalDateTime dataFim;
 
     private LocalDateTime dataCadastro;
+
+    private Boolean resgatado = false;
 }

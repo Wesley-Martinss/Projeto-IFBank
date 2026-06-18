@@ -145,8 +145,8 @@
         }
       }
 
-      <!-- DEPÓSITO / SAQUE / INVESTIMENTO -->
-      @if (tipoMovimentacao !== 'TRANSFERENCIA' && !sucesso) {
+      <!-- DEPÓSITO / SAQUE -->
+      @if ((tipoMovimentacao === 'DEPOSITO' || tipoMovimentacao === 'SAQUE') && !sucesso) {
 
         @if (erro) {
           <div class="alert-erro">
@@ -177,6 +177,82 @@
             {{ getBtnLabel() }}
           }
         </button>
+      }
+
+      <!-- INVESTIMENTO -->
+      @if (tipoMovimentacao === 'INVESTIMENTO' && !sucesso) {
+        
+        @if (!produtoSelecionado) {
+          <h3>Escolha um produto para investir</h3>
+          <div class="produtos-grid">
+            @for (p of produtosAtivos; track p.id) {
+              <div class="produto-card" (click)="selecionarProduto(p)">
+                <div class="prod-header">
+                  <h4>{{ p.nome }}</h4>
+                  <span class="badge">{{ p.tipoInvestimento }}</span>
+                </div>
+                <div class="prod-details">
+                  <div class="detail">
+                    <span class="lbl">Rendimento</span>
+                    <span class="val">{{ p.taxaRendimentoMinuto }}% / min</span>
+                  </div>
+                  <div class="detail">
+                    <span class="lbl">Prazo</span>
+                    <span class="val">{{ p.prazoMinutos }} min</span>
+                  </div>
+                  <div class="detail">
+                    <span class="lbl">Mínimo</span>
+                    <span class="val">R$ {{ p.valorMinimo }}</span>
+                  </div>
+                </div>
+              </div>
+            } @empty {
+              <div class="alert-erro">Nenhum investimento disponível no momento.</div>
+            }
+          </div>
+        } @else {
+          
+          <button class="btn-ghost" (click)="voltarProdutos()" style="margin-bottom: 20px;">
+            ← Voltar para opções
+          </button>
+          
+          <div class="dest-card" style="margin-bottom: 24px;">
+            <div class="dest-info">
+              <p class="dest-nome">Você está investindo em: {{ produtoSelecionado.nome }}</p>
+              <p class="dest-chave">O valor ficará retido por {{ produtoSelecionado.prazoMinutos }} minutos e renderá {{ produtoSelecionado.taxaRendimentoMinuto }}%.</p>
+            </div>
+          </div>
+
+          @if (erro) {
+            <div class="alert-erro">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              {{ erro }}
+            </div>
+          }
+
+          <div class="row2">
+            <div class="field">
+              <label class="label">Valor (Mínimo: R$ {{ produtoSelecionado.valorMinimo }})</label>
+              <div class="input-prefix">
+                <span class="prefix-label">R$</span>
+                <input class="input input-with-prefix" type="number" [(ngModel)]="valor" placeholder="0,00" step="0.01"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Descrição <span class="label-opt">(opcional)</span></label>
+            <input class="input" [(ngModel)]="descricao" placeholder="Objetivo deste investimento"/>
+          </div>
+
+          <button class="btn-primary" (click)="realizarMovimentacao()" [disabled]="carregando">
+            @if (carregando) {
+              <span class="spinner"></span> Investindo...
+            } @else {
+              Confirmar Investimento
+            }
+          </button>
+        }
       }
 
     </div>

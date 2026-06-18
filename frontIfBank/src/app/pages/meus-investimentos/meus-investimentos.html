@@ -1,0 +1,68 @@
+<div class="investimentos-page">
+  <div class="header">
+    <button class="btn-voltar" (click)="voltar()">← Voltar</button>
+    <h2>Meus Investimentos</h2>
+    <button class="btn-atualizar" (click)="carregarInvestimentos()" [disabled]="carregando">
+      🔄 Atualizar Rendimentos
+    </button>
+  </div>
+
+  <main class="main-content">
+    @if (mensagemSucesso) {
+      <div class="alert success">{{ mensagemSucesso }}</div>
+    }
+    @if (erro) {
+      <div class="alert error">{{ erro }}</div>
+    }
+
+    @if (carregando && investimentos.length === 0) {
+      <div class="loading-state">
+        Carregando investimentos...
+      </div>
+    } @else if (investimentos.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📉</div>
+        <h3>Nenhum investimento ativo</h3>
+        <p>Você ainda não possui dinheiro rendendo conosco.</p>
+        <button class="btn-primary" routerLink="/movimentacoes" [queryParams]="{tipo: 'INVESTIMENTO'}">Investir Agora</button>
+      </div>
+    } @else {
+      <div class="investimentos-grid">
+        @for (inv of investimentos; track inv.id) {
+          <div class="investimento-card">
+            <div class="card-header">
+              <span class="produto-nome">{{ inv.nomeProduto }}</span>
+              <span class="taxa">Rende {{ inv.taxaRendimentoMinuto }}% / min</span>
+            </div>
+            
+            <div class="card-body">
+              <div class="valores">
+                <div class="valor-item">
+                  <span class="label">Valor Investido</span>
+                  <span class="valor">R$ {{ inv.valorInvestido | number:'1.2-2' }}</span>
+                </div>
+                <div class="valor-item rendimento">
+                  <span class="label">Rendimento Atual (+ lucro)</span>
+                  <span class="valor lucro">+ R$ {{ inv.rendimentoAcumulado | number:'1.2-2' }}</span>
+                </div>
+              </div>
+              
+              <div class="total">
+                <span class="label">Total Disponível</span>
+                <span class="valor-total">R$ {{ (inv.valorInvestido + inv.rendimentoAcumulado) | number:'1.2-2' }}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <button class="btn-resgatar" 
+                      (click)="resgatar(inv)" 
+                      [disabled]="investimentoResgatando === inv.id">
+                {{ investimentoResgatando === inv.id ? 'Resgatando...' : 'Resgatar Tudo' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

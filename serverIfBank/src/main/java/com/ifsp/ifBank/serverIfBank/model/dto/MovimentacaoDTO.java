@@ -21,4 +21,6 @@ public class MovimentacaoDTO {
     private String descricao;
 
     private TipoMovimentacao tipoMovimentacao;
+
+    private Integer idProdutoInvestimento;
 }

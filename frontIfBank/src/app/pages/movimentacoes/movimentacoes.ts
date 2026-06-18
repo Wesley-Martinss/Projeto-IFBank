@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MovimentacaoService } from '../../services/movimentacao';
+import { ProdutoInvestimentoService, ProdutoInvestimentoDTO } from '../../services/produto-investimento.service';
 import { MovimentacaoDTO, TipoMovimentacao } from '../../models/movimentacao.model';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -31,11 +32,14 @@ export class MovimentacoesComponent {
   carregando = false;
 
   tipoMovimentacao: TipoMovimentacao | null = null;
+  produtosAtivos: ProdutoInvestimentoDTO[] = [];
+  produtoSelecionado: ProdutoInvestimentoDTO | null = null;
 private getToken() {
   return localStorage.getItem('token');
 }
   constructor(
     private movimentacaoService: MovimentacaoService,
+    private produtoService: ProdutoInvestimentoService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute
@@ -44,9 +48,32 @@ private getToken() {
   ngOnInit() {
   this.route.queryParams.subscribe(params => {
     this.tipoMovimentacao = params['tipo'] as TipoMovimentacao;
+    if (this.tipoMovimentacao === 'INVESTIMENTO') {
+      this.carregarProdutosInvestimento();
+    }
   });
 
   this.carregarContaOrigem();
+}
+
+async carregarProdutosInvestimento() {
+  try {
+    this.produtosAtivos = await this.produtoService.findAtivos();
+    this.cdr.markForCheck();
+  } catch (e) {
+    this.erro = 'Erro ao carregar opções de investimento.';
+  }
+}
+
+selecionarProduto(produto: ProdutoInvestimentoDTO) {
+  this.produtoSelecionado = produto;
+  this.valor = produto.valorMinimo;
+}
+
+voltarProdutos() {
+  this.produtoSelecionado = null;
+  this.valor = null;
+  this.erro = '';
 }
 
 private async carregarContaOrigem() {
@@ -105,6 +132,8 @@ private async carregarContaOrigem() {
         dto.chaveDestinatario = this.chaveDestinatario;
         dto.idContaDestinatario = this.dadosDestinatario?.idContaDestinatario;
         dto.nomeContaDestinatario = this.dadosDestinatario?.nomeContaDestinatario;
+      } else if (this.tipoMovimentacao === 'INVESTIMENTO') {
+        dto.idProdutoInvestimento = this.produtoSelecionado?.id;
       }
 
       await this.movimentacaoService.realizarMovimentacao(dto);

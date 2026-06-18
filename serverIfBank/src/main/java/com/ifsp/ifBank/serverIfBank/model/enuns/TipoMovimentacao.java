@@ -6,4 +6,5 @@ public enum TipoMovimentacao {
     SAQUE,
     TRANSFERENCIA,
     INVESTIMENTO,
+    RENDIMENTO
 }

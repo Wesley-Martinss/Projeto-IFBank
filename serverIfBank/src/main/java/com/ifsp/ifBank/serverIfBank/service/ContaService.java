@@ -59,7 +59,7 @@ public class ContaService {
         return contaRepository.save(conta);
     }
 
-    public Conta findByUsuarioId(Long usuarioId) {
+    public Conta findByUsuarioId(Integer usuarioId) {
         return contaRepository.findByUsuarioId(usuarioId).orElse(null);
     }
 

@@ -3,16 +3,21 @@ package com.ifsp.ifBank.serverIfBank.service;
 
 import com.ifsp.ifBank.serverIfBank.model.ChavesTransferencia;
 import com.ifsp.ifBank.serverIfBank.model.Conta;
+import com.ifsp.ifBank.serverIfBank.model.Investimento;
+import com.ifsp.ifBank.serverIfBank.model.ProdutoInvestimento;
 import com.ifsp.ifBank.serverIfBank.model.MovimentacaoConta;
 import com.ifsp.ifBank.serverIfBank.model.dto.MovimentacaoDTO;
 import com.ifsp.ifBank.serverIfBank.model.enuns.TipoMovimentacao;
 import com.ifsp.ifBank.serverIfBank.repository.ChaveTransferenciaRepository;
+import com.ifsp.ifBank.serverIfBank.repository.InvestimentoRepository;
 import com.ifsp.ifBank.serverIfBank.repository.MovimentacaoRepository;
+import com.ifsp.ifBank.serverIfBank.repository.ProdutoInvestimentoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +25,8 @@ public class MovimentacaoService {
     private final ChaveTransferenciaRepository chaveTransferenciaRepository;
     private final MovimentacaoRepository movimentacaoRepository;
     private final ContaService contaService;
+    private final InvestimentoRepository investimentoRepository;
+    private final ProdutoInvestimentoRepository produtoInvestimentoRepository;
 
     public MovimentacaoDTO procuraDestinatarioParaCriarNovaMovimentacao(String chaveDestinatario){
 
@@ -58,6 +65,8 @@ public class MovimentacaoService {
             case SAQUE -> realizarSaque(dto);
 
             case INVESTIMENTO -> realizarInvestimento(dto);
+            
+            case RENDIMENTO -> throw new IllegalArgumentException("Movimentações de rendimento são geradas automaticamente e não por este método.");
         };
     }
 
@@ -148,7 +157,42 @@ public class MovimentacaoService {
     }
 
     private MovimentacaoConta realizarInvestimento(MovimentacaoDTO dto){
-        throw new UnsupportedOperationException(
-                "Investimentos ainda não funciona");
+
+        Conta conta = contaService.findById(dto.getIdContaOrigem());
+        if(conta == null){
+            return null;
+        }
+
+        ProdutoInvestimento produto = produtoInvestimentoRepository.findById(dto.getIdProdutoInvestimento()).orElse(null);
+        if(produto == null || !produto.getAtivo()){
+            throw new RuntimeException("Produto de investimento inválido ou inativo.");
+        }
+
+        if(dto.getValor().compareTo(produto.getValorMinimo()) < 0){
+            throw new RuntimeException("Valor menor que o mínimo permitido para este produto.");
+        }
+
+        if(!contaService.subNoSaldo(conta, dto.getValor())){
+            throw new RuntimeException("Saldo insuficiente.");
+        }
+
+        Investimento investimento = new Investimento();
+        investimento.setConta(conta);
+        investimento.setProduto(produto);
+        investimento.setValorInvestido(dto.getValor());
+        investimento.setRendimento(BigDecimal.ZERO);
+        investimento.setDataInicio(LocalDateTime.now());
+        investimento.setDataFim(LocalDateTime.now().plusMinutes(produto.getPrazoMinutos()));
+        investimento.setDataCadastro(LocalDateTime.now());
+        investimentoRepository.save(investimento);
+
+        MovimentacaoConta movimentacao = new MovimentacaoConta();
+        movimentacao.setContaOrigem(conta);
+        movimentacao.setTipoMovimentacao(TipoMovimentacao.INVESTIMENTO);
+        movimentacao.setValor(dto.getValor());
+        movimentacao.setDescricao(dto.getDescricao());
+        movimentacao.setDataMovimentacao(LocalDateTime.now());
+
+        return movimentacaoRepository.save(movimentacao);
     }
 }

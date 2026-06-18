@@ -8,4 +8,5 @@ export interface MovimentacaoDTO {
   valor?: number;
   descricao?: string;
   tipoMovimentacao?: TipoMovimentacao;
+  idProdutoInvestimento?: number;
 }

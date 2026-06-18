@@ -19,7 +19,7 @@ public class ContaController {
     private final ContaService contaService;
 
     @GetMapping("/por-usuario/{usuarioId}")
-    public ResponseEntity<Conta> buscarPorUsuario(@PathVariable Long usuarioId) {
+    public ResponseEntity<Conta> buscarPorUsuario(@PathVariable("usuarioId") Integer usuarioId) {
         Conta conta = contaService.findByUsuarioId(usuarioId);
         if (conta == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(conta);

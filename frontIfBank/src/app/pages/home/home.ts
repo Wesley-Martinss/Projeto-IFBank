@@ -137,5 +137,9 @@ async onFotoSelecionada(event: Event) {
       }
     );
   }
+
+  abrirMeusInvestimentos() {
+    this.router.navigate(['/meus-investimentos']);
+  }
     
 }

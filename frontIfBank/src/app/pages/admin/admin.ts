@@ -4,16 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AdminService, ContaAdmin, MovimentacaoAdmin } from '../../services/admin.service';
+import { AdminInvestimentosComponent } from '../admin-investimentos/admin-investimentos';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminInvestimentosComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
 export class AdminComponent implements OnInit {
-  abaAtiva: 'contas' | 'transacoes' | 'gerentes' = 'contas';
+  abaAtiva: 'contas' | 'transacoes' | 'gerentes' | 'investimentos' = 'contas';
 
   contas: ContaAdmin[] = [];
   movimentacoes: MovimentacaoAdmin[] = [];
@@ -42,7 +43,7 @@ export class AdminComponent implements OnInit {
     this.carregarContas();
   }
 
-  mudarAba(aba: 'contas' | 'transacoes' | 'gerentes') {
+  mudarAba(aba: 'contas' | 'transacoes' | 'gerentes' | 'investimentos') {
     this.abaAtiva = aba;
     if (aba === 'contas' && this.contas.length === 0) this.carregarContas();
     if (aba === 'transacoes' && this.movimentacoes.length === 0) this.carregarMovimentacoes();

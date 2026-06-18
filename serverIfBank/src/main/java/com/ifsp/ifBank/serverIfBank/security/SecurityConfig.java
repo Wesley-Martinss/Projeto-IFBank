@@ -44,6 +44,12 @@ public class SecurityConfig {
 
                         // Só ADMIN
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/produtos-investimento/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/produtos-investimento/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/produtos-investimento/**").hasRole("ADMIN")
+
+                        // GET para PRODUTOS (CLIENTE e ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/produtos-investimento/**").authenticated()
 
                         // CLIENTE, GERENTE e ADMIN autenticados
                         .requestMatchers("/usuarios/*/foto").authenticated()

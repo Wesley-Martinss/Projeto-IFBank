@@ -54,9 +54,9 @@ CREATE TABLE chaves_transferencia (
         REFERENCES conta(id)
 );
 
-CREATE TABLE investimento (
+CREATE TABLE produto_investimento (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    conta_id INT NOT NULL,
+    nome VARCHAR(150) NOT NULL,
     tipo_investimento ENUM(
         'POUPANCA',
         'CDB',
@@ -65,16 +65,30 @@ CREATE TABLE investimento (
         'TESOURO_DIRETO',
         'FUNDO_INVESTIMENTO'
     ) NOT NULL,
+    taxa_rendimento_minuto DECIMAL(10,4) NOT NULL,
+    prazo_minutos INT NOT NULL,
+    valor_minimo DECIMAL(15,2) NOT NULL,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE investimento (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    conta_id INT NOT NULL,
+    produto_id INT NOT NULL,
     valor_investido DECIMAL(15,2) NOT NULL,
     rendimento DECIMAL(15,2) NOT NULL DEFAULT 0.00,
-    duracao_dias INT NOT NULL,
     data_inicio DATETIME NOT NULL,
     data_fim DATETIME NULL,
     data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_investimento_conta
         FOREIGN KEY (conta_id)
-        REFERENCES conta(id)
+        REFERENCES conta(id),
+
+    CONSTRAINT fk_investimento_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES produto_investimento(id)
 );
 
 CREATE TABLE movimentacao_conta (
@@ -103,4 +117,4 @@ CREATE TABLE movimentacao_conta (
 );
 ALTER TABLE movimentacao_conta ADD COLUMN tipo_operacao VARCHAR(10);
 
-
+ALTER TABLE investimento ADD COLUMN resgatado BOOLEAN NOT NULL DEFAULT FALSE;

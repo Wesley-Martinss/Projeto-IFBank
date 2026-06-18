@@ -35,6 +35,13 @@
     >
       Gerentes
     </button>
+    <button
+      class="tab-btn"
+      [class.ativa]="abaAtiva === 'investimentos'"
+      (click)="mudarAba('investimentos')"
+    >
+      Investimentos
+    </button>
   </nav>
 
   <!-- Conteúdo -->
@@ -189,6 +196,16 @@
             {{ criandoGerente ? 'Criando...' : 'Criar Gerente' }}
           </button>
         </div>
+      </section>
+    }
+
+    <!-- ABA: Investimentos -->
+    @if (abaAtiva === 'investimentos') {
+      <section>
+        <div class="secao-header">
+          <h2>Gerenciar Produtos de Investimento</h2>
+        </div>
+        <app-admin-investimentos></app-admin-investimentos>
       </section>
     }
 
