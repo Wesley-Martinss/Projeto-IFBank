@@ -149,6 +149,8 @@
 .saque    .card-icon-wrap  { background: #FFF0F0; }
 .transf   .card-icon-wrap  { background: #F0F4FF; }
 .invest   .card-icon-wrap  { background: #FFFBEC; }
+.meus-invest .card-icon-wrap { background: #FAEEDA; }
+.chaves   .card-icon-wrap  { background: #EEEDFE; }
 
 .card-label {
   font-size: 0.9rem;
@@ -333,3 +335,124 @@
   opacity: 1;
 }
 
+
+/* Dashboard de Saldo */
+.dashboard-saldo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0 0 1.75rem;
+}
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.1rem 1.3rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dashboard-card-saldo {
+  border-left: 4px solid #EC0000;
+}
+
+.dashboard-card-investido {
+  border-left: 4px solid #3B6D11;
+}
+
+.dashboard-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6B6B6B;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.dashboard-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #6B6B6B;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .dashboard-saldo {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Extrato / Últimas movimentações */
+.extrato-section {
+  margin-top: 2rem;
+}
+
+.extrato-loading {
+  text-align: center;
+  color: #6B6B6B;
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+
+.extrato-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.extrato-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #fff;
+  border: 1.5px solid #EEEEEE;
+  border-radius: 14px;
+  padding: 0.85rem 1.1rem;
+}
+
+.extrato-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #F8F9FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.extrato-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.extrato-titulo {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.extrato-data {
+  font-size: 0.75rem;
+  color: #9B9B9B;
+}
+
+.extrato-valor {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #3B6D11;
+  flex-shrink: 0;
+}
+
+.extrato-valor.negativo {
+  color: #993C1D;
+}

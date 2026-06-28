@@ -11,6 +11,7 @@ import com.ifsp.ifBank.serverIfBank.repository.ContaRepository;
 import com.ifsp.ifBank.serverIfBank.repository.MovimentacaoRepository;
 import com.ifsp.ifBank.serverIfBank.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class AdminService {
     private final ContaRepository contaRepository;
     private final MovimentacaoRepository movimentacaoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<ContaAdminDTO> listarContas() {
         return contaRepository.findAll()
@@ -39,9 +41,13 @@ public class AdminService {
     }
 
     public void criarGerente(Usuario usuario) {
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new RuntimeException("Já existe uma conta cadastrada com este e-mail.");
+        }
         usuario.setTipoUsuario(TipoUsuario.GERENTE);
         usuario.setStatusConta(StatusConta.ATIVA);
         usuario.setAtivo(true);
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         usuario.setDataCadastro(LocalDateTime.now());
         usuarioRepository.save(usuario);
     }

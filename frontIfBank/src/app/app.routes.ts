@@ -7,6 +7,7 @@ import { AdminComponent } from './pages/admin/admin';
 import { AdminInvestimentosComponent } from './pages/admin-investimentos/admin-investimentos';
 import { ResetarSenhaComponent } from './pages/resetar-senha/resetar-senha';
 import { MeusInvestimentosComponent } from './pages/meus-investimentos/meus-investimentos';
+import { MinhasChavesComponent } from './pages/minhas-chaves/minhas-chaves';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,4 +19,5 @@ export const routes: Routes = [
   { path: 'admin-investimentos', component: AdminInvestimentosComponent },
   { path: 'resetar-senha', component: ResetarSenhaComponent },
   { path: 'meus-investimentos', component: MeusInvestimentosComponent },
+  { path: 'minhas-chaves', component: MinhasChavesComponent },
 ];

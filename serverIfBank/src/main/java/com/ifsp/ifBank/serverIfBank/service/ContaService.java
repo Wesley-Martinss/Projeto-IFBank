@@ -1,8 +1,11 @@
 package com.ifsp.ifBank.serverIfBank.service;
 
 import com.ifsp.ifBank.serverIfBank.model.Conta;
+import com.ifsp.ifBank.serverIfBank.model.Investimento;
 import com.ifsp.ifBank.serverIfBank.model.Usuario;
+import com.ifsp.ifBank.serverIfBank.model.dto.DashboardDTO;
 import com.ifsp.ifBank.serverIfBank.repository.ContaRepository;
+import com.ifsp.ifBank.serverIfBank.repository.InvestimentoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,49 +16,45 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ContaService {
     private final ContaRepository contaRepository;
+    private final InvestimentoRepository investimentoRepository;
 
     public Conta findById(Integer id){
         return contaRepository.findById(id).orElse(null);
     }
 
     public boolean addNoSaldo(Conta conta, BigDecimal valor){
-        if(conta != null) {
-            BigDecimal saldoAtual = conta.getSaldo();
-            BigDecimal saldoNovo = saldoAtual.add(valor);
-            conta.setSaldo(saldoNovo);
-            contaRepository.save(conta);
-            return true;
+        if(conta == null || valor == null || valor.compareTo(BigDecimal.ZERO) <= 0){
+            return false;
         }
-
-        return false;
-
+        BigDecimal saldoAtual = conta.getSaldo();
+        BigDecimal saldoNovo = saldoAtual.add(valor);
+        conta.setSaldo(saldoNovo);
+        contaRepository.save(conta);
+        return true;
     }
 
     public boolean subNoSaldo(Conta conta, BigDecimal valor){
-        if(conta != null) {
-            BigDecimal saldoAtual = conta.getSaldo();
-            BigDecimal saldoNovo = saldoAtual.subtract(valor);
-            conta.setSaldo(saldoNovo);
-            contaRepository.save(conta);
-            return true;
+        if(conta == null || valor == null || valor.compareTo(BigDecimal.ZERO) <= 0){
+            return false;
         }
-
-        return false;
-
+        BigDecimal saldoAtual = conta.getSaldo();
+        BigDecimal saldoNovo = saldoAtual.subtract(valor);
+        if(saldoNovo.compareTo(BigDecimal.ZERO) < 0){
+            return false;
+        }
+        conta.setSaldo(saldoNovo);
+        contaRepository.save(conta);
+        return true;
     }
 
     public Conta criarConta(Usuario usuario) {
         Conta conta = new Conta();
         conta.setUsuario(usuario);
-        conta.setAgencia("0001"); // Agência padrão    
+        conta.setAgencia("0001");
         conta.setSaldo(BigDecimal.ZERO);
         conta.setAtiva(true);
         conta.setDataCriacao(LocalDateTime.now());
-        
-        // Usa o ID do próprio usuário como número da conta. 
-        // Como cada usuário tem 1 conta, o número sempre será único e já existe antes de salvar!
         conta.setNumeroConta(String.valueOf(usuario.getId()));
-        
         return contaRepository.save(conta);
     }
 
@@ -63,4 +62,22 @@ public class ContaService {
         return contaRepository.findByUsuarioId(usuarioId).orElse(null);
     }
 
+    public DashboardDTO buscarDashboard(Integer usuarioId) {
+        Conta conta = findByUsuarioId(usuarioId);
+        if (conta == null) {
+            return null;
+        }
+
+        BigDecimal totalInvestido = investimentoRepository
+                .findByContaIdAndResgatadoFalse(conta.getId())
+                .stream()
+                .map(Investimento::getValorInvestido)
+                .filter(v -> v != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        DashboardDTO dto = new DashboardDTO();
+        dto.setSaldo(conta.getSaldo());
+        dto.setTotalInvestido(totalInvestido);
+        return dto;
+    }
 }

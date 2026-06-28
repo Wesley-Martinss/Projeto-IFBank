@@ -136,8 +136,13 @@ private async carregarContaOrigem() {
         dto.idProdutoInvestimento = this.produtoSelecionado?.id;
       }
 
-      await this.movimentacaoService.realizarMovimentacao(dto);
-      this.sucesso = true;
+      const resultado = await this.movimentacaoService.realizarMovimentacao(dto);
+
+      if (resultado.sucesso) {
+        this.sucesso = true;
+      } else {
+        this.erro = resultado.erro || 'Erro ao realizar movimentação.';
+      }
 
     } catch {
       this.erro = 'Erro ao realizar movimentação.';

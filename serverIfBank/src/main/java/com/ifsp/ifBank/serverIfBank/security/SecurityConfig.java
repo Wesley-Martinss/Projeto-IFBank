@@ -54,6 +54,7 @@ public class SecurityConfig {
                         // CLIENTE, GERENTE e ADMIN autenticados
                         .requestMatchers("/usuarios/*/foto").authenticated()
                         .requestMatchers("/movimentacoes/**").hasRole("CLIENTE")
+                        .requestMatchers("/chaves-transferencia/**").hasRole("CLIENTE")
 
                         // Qualquer outra rota precisa estar autenticado
                         .anyRequest().authenticated()

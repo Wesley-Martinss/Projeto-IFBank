@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface InvestimentoRepository extends JpaRepository<Investimento, Integer> {
     List<Investimento> findByContaId(Integer contaId);
+
+    List<Investimento> findByContaIdAndResgatadoFalse(Integer contaId);
 }

@@ -6,18 +6,23 @@ import com.ifsp.ifBank.serverIfBank.model.Conta;
 import com.ifsp.ifBank.serverIfBank.model.Investimento;
 import com.ifsp.ifBank.serverIfBank.model.ProdutoInvestimento;
 import com.ifsp.ifBank.serverIfBank.model.MovimentacaoConta;
+import com.ifsp.ifBank.serverIfBank.model.Usuario;
 import com.ifsp.ifBank.serverIfBank.model.dto.MovimentacaoDTO;
+import com.ifsp.ifBank.serverIfBank.model.dto.MovimentacaoResumoDTO;
 import com.ifsp.ifBank.serverIfBank.model.enuns.TipoMovimentacao;
 import com.ifsp.ifBank.serverIfBank.repository.ChaveTransferenciaRepository;
+import com.ifsp.ifBank.serverIfBank.repository.ContaRepository;
 import com.ifsp.ifBank.serverIfBank.repository.InvestimentoRepository;
 import com.ifsp.ifBank.serverIfBank.repository.MovimentacaoRepository;
 import com.ifsp.ifBank.serverIfBank.repository.ProdutoInvestimentoRepository;
+import com.ifsp.ifBank.serverIfBank.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,8 @@ public class MovimentacaoService {
     private final ChaveTransferenciaRepository chaveTransferenciaRepository;
     private final MovimentacaoRepository movimentacaoRepository;
     private final ContaService contaService;
+    private final ContaRepository contaRepository;
+    private final UsuarioRepository usuarioRepository;
     private final InvestimentoRepository investimentoRepository;
     private final ProdutoInvestimentoRepository produtoInvestimentoRepository;
 
@@ -48,12 +55,59 @@ public class MovimentacaoService {
         return movimentacaoDTO;
     }
 
+    public List<MovimentacaoResumoDTO> listarMinhasMovimentacoes(String emailUsuario) {
+        Conta conta = getContaByEmail(emailUsuario);
+
+        return movimentacaoRepository.findByContaOrigemIdOrContaDestinoIdOrderByDataMovimentacaoDesc(conta.getId(), conta.getId())
+                .stream()
+                .map(m -> toResumoDTO(m, conta.getId()))
+                .toList();
+    }
+
+    private MovimentacaoResumoDTO toResumoDTO(MovimentacaoConta m, Integer contaId) {
+        MovimentacaoResumoDTO dto = new MovimentacaoResumoDTO();
+        dto.setTipoMovimentacao(m.getTipoMovimentacao());
+        dto.setDescricao(m.getDescricao());
+        dto.setDataMovimentacao(m.getDataMovimentacao());
+
+        // Se for uma transferência recebida (conta logada é o destino), o valor é positivo (entrada).
+        // Se for uma transferência enviada/saque/investimento, valor é negativo (saída) na ótica da conta.
+        boolean ehEntradaNaConta = m.getContaDestino() != null && m.getContaDestino().getId().equals(contaId);
+        boolean ehTransferenciaEnviada = m.getTipoMovimentacao() == TipoMovimentacao.TRANSFERENCIA
+                && m.getContaOrigem() != null && m.getContaOrigem().getId().equals(contaId);
+
+        if (ehEntradaNaConta || m.getTipoMovimentacao() == TipoMovimentacao.DEPOSITO
+                || m.getTipoMovimentacao() == TipoMovimentacao.RENDIMENTO) {
+            dto.setValor(m.getValor());
+        } else if (ehTransferenciaEnviada || m.getTipoMovimentacao() == TipoMovimentacao.SAQUE
+                || m.getTipoMovimentacao() == TipoMovimentacao.INVESTIMENTO) {
+            dto.setValor(m.getValor().negate());
+        } else {
+            dto.setValor(m.getValor());
+        }
+
+        return dto;
+    }
+
+    private Conta getContaByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        return contaRepository.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada."));
+    }
+
 
     @Transactional
-    public MovimentacaoConta realizarMovimentacao(MovimentacaoDTO dto) {
+    public MovimentacaoConta realizarMovimentacao(MovimentacaoDTO dto, String emailUsuarioAutenticado) {
 
         if(dto == null || dto.getTipoMovimentacao() == null){
             return null;
+        }
+
+        // Garante que a conta de origem informada realmente pertence ao usuário autenticado.
+        Conta contaDoUsuario = getContaByEmail(emailUsuarioAutenticado);
+        if(dto.getIdContaOrigem() == null || !dto.getIdContaOrigem().equals(contaDoUsuario.getId())){
+            throw new RuntimeException("A conta de origem informada não pertence ao usuário autenticado.");
         }
 
         return switch (dto.getTipoMovimentacao()) {
@@ -74,7 +128,7 @@ public class MovimentacaoService {
 
         if(dto.getIdContaOrigem() == null ||
                 dto.getIdContaDestinatario() == null){
-            return null;
+            throw new RuntimeException("Dados da transferência incompletos.");
         }
 
         Conta contaOrigem =
@@ -84,15 +138,21 @@ public class MovimentacaoService {
                 contaService.findById(dto.getIdContaDestinatario());
 
         if(contaOrigem == null || contaDestino == null){
-            return null;
+            throw new RuntimeException("Conta de origem ou destino não encontrada.");
+        }
+
+        if(contaOrigem.getId().equals(contaDestino.getId())){
+            throw new RuntimeException("Não é possível transferir para a própria conta.");
         }
 
         if(!contaService.subNoSaldo(contaOrigem, dto.getValor())){
-            return null;
+            throw new RuntimeException("Saldo insuficiente para realizar a transferência.");
         }
 
         if(!contaService.addNoSaldo(contaDestino, dto.getValor())){
-            return null;
+            // Reverte o débito já realizado, já que o crédito ao destino falhou.
+            contaService.addNoSaldo(contaOrigem, dto.getValor());
+            throw new RuntimeException("Não foi possível creditar o valor na conta de destino.");
         }
 
         MovimentacaoConta movimentacao = new MovimentacaoConta();
@@ -114,11 +174,11 @@ public class MovimentacaoService {
                 contaService.findById(dto.getIdContaOrigem());
 
         if(conta == null){
-            return null;
+            throw new RuntimeException("Conta não encontrada.");
         }
 
         if(!contaService.addNoSaldo(conta, dto.getValor())){
-            return null;
+            throw new RuntimeException("Informe um valor de depósito válido.");
         }
 
         MovimentacaoConta movimentacao = new MovimentacaoConta();
@@ -138,11 +198,11 @@ public class MovimentacaoService {
                 contaService.findById(dto.getIdContaOrigem());
 
         if(conta == null){
-            return null;
+            throw new RuntimeException("Conta não encontrada.");
         }
 
         if(!contaService.subNoSaldo(conta, dto.getValor())){
-            return null;
+            throw new RuntimeException("Saldo insuficiente para realizar o saque.");
         }
 
         MovimentacaoConta movimentacao = new MovimentacaoConta();

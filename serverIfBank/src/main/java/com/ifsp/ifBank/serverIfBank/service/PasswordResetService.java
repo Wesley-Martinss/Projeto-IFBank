@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class PasswordResetService {
 
     private final UsuarioRepository usuarioRepository;
     private final JavaMailSender mailSender;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.frontend.url}")
     private String frontendUrl;
@@ -57,11 +59,11 @@ public class PasswordResetService {
             throw new RuntimeException("Token expirado. Solicite um novo link.");
         }
 
-        if (!request.getSenhaAtual().equals(usuario.getSenha())) {
+        if (!passwordEncoder.matches(request.getSenhaAtual(), usuario.getSenha())) {
             throw new RuntimeException("Senha atual incorreta");
         }
 
-        usuario.setSenha(request.getNovaSenha()); // ⚠️ Se usa BCrypt: passwordEncoder.encode(request.getNovaSenha())
+        usuario.setSenha(passwordEncoder.encode(request.getNovaSenha()));
         usuario.setResetToken(null);
         usuario.setResetTokenExpiry(null);
         usuarioRepository.save(usuario);

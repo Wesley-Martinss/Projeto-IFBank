@@ -46,12 +46,16 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<UsuarioDTO> registrar(@RequestBody Usuario usuario){
-        UsuarioDTO novoUsuario = usuarioService.cadastrar(usuario);
-        
-        return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(novoUsuario);
+    public ResponseEntity<?> registrar(@RequestBody Usuario usuario){
+        try {
+            UsuarioDTO novoUsuario = usuarioService.cadastrar(usuario);
+
+            return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(novoUsuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/pendentes")

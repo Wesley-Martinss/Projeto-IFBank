@@ -28,7 +28,7 @@ export class MovimentacaoService {
   }
 
 
-    async realizarMovimentacao(dto: MovimentacaoDTO): Promise<boolean> {
+    async realizarMovimentacao(dto: MovimentacaoDTO): Promise<{ sucesso: boolean; erro?: string }> {
       try {
         const res = await fetch(this.api, {
           method: 'POST',
@@ -37,9 +37,12 @@ export class MovimentacaoService {
            },
           body: JSON.stringify(dto),
         });
-        return res.ok;
-      } catch {
-        return false;
+        if (res.ok) {
+          return { sucesso: true };
+        }
+        return { sucesso: false, erro: await res.text() };
+      } catch (e: any) {
+        return { sucesso: false, erro: e.message };
       }
     }
     }

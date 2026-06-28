@@ -1,0 +1,105 @@
+<div class="chaves-page">
+  <div class="header">
+    <button class="btn-voltar" (click)="voltar()">← Voltar</button>
+    <h2>Minhas Chaves Pix</h2>
+    <button class="btn-atualizar" (click)="carregarChaves()" [disabled]="carregando">
+      🔄 Atualizar
+    </button>
+  </div>
+
+  <main class="main-content">
+    @if (mensagemSucesso) {
+      <div class="alert success">{{ mensagemSucesso }}</div>
+    }
+    @if (erro) {
+      <div class="alert error">{{ erro }}</div>
+    }
+
+    <section class="card-criar">
+      <h3>Cadastrar nova chave</h3>
+
+      <div class="tipos-grid">
+        <button
+          type="button"
+          class="tipo-btn"
+          [class.ativo]="tipoSelecionado === 'EMAIL'"
+          (click)="selecionarTipo('EMAIL')"
+        >
+          📧 E-mail
+        </button>
+        <button
+          type="button"
+          class="tipo-btn"
+          [class.ativo]="tipoSelecionado === 'CPF'"
+          (click)="selecionarTipo('CPF')"
+        >
+          🪪 CPF
+        </button>
+        <button
+          type="button"
+          class="tipo-btn"
+          [class.ativo]="tipoSelecionado === 'TELEFONE'"
+          (click)="selecionarTipo('TELEFONE')"
+        >
+          📱 Telefone
+        </button>
+        <button
+          type="button"
+          class="tipo-btn"
+          [class.ativo]="tipoSelecionado === 'ALEATORIA'"
+          (click)="selecionarTipo('ALEATORIA')"
+        >
+          🎲 Aleatória
+        </button>
+      </div>
+
+      @if (tipoSelecionado !== 'ALEATORIA') {
+        <div class="field">
+          <label>
+            @switch (tipoSelecionado) {
+              @case ('EMAIL') { Confirme seu e-mail cadastrado }
+              @case ('CPF') { Confirme seu CPF cadastrado }
+              @default { Telefone (com DDD) }
+            }
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="valorChave"
+            placeholder="Digite aqui"
+          />
+        </div>
+      } @else {
+        <p class="aleatoria-info">Uma chave aleatória será gerada automaticamente para você.</p>
+      }
+
+      <button class="btn-primary" (click)="criarChave()" [disabled]="criando">
+        {{ criando ? 'Cadastrando...' : 'Cadastrar chave' }}
+      </button>
+    </section>
+
+    <section class="lista-chaves">
+      <h3>Chaves ativas</h3>
+
+      @if (carregando && chaves.length === 0) {
+        <div class="loading-state">Carregando chaves...</div>
+      } @else if (chaves.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">🔑</div>
+          <p>Você ainda não possui chaves Pix cadastradas.</p>
+        </div>
+      } @else {
+        <div class="chaves-grid">
+          @for (chave of chaves; track chave.id) {
+            <div class="chave-card">
+              <span class="chave-valor">{{ chave.chave }}</span>
+              <div class="chave-actions">
+                <button class="btn-copiar" (click)="copiarChave(chave.chave)" title="Copiar">📋</button>
+                <button class="btn-remover" (click)="desativar(chave)" title="Remover">🗑️</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

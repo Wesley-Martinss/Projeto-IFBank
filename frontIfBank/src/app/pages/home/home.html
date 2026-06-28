@@ -3,37 +3,37 @@
   <!-- Header -->
   <header class="home-header">
 
-  <!-- LOGO - esquerda -->
-  <div class="header-brand">
-    <div class="header-logo">🏦</div>
-    <span class="header-name">IFSPBank</span>
-  </div>
+    <!-- LOGO - esquerda -->
+    <div class="header-brand">
+      <div class="header-logo">🏦</div>
+      <span class="header-name">IFSPBank</span>
+    </div>
 
-  <!-- DIREITA -->
-  <div class="header-right">
+    <!-- DIREITA -->
+    <div class="header-right">
     <span class="badge-tipo" [class.gerente]="usuario?.tipoUsuario === 'GERENTE'">
       {{ usuario?.tipoUsuario }}
     </span>
 
-   <!-- Foto -->
-  <div class="header-avatar" (click)="triggerFotoInput()">
-    <img *ngIf="foto" [src]="foto" alt="Foto" class="avatar-img" />
-    <span *ngIf="!foto" class="avatar-sem-foto">+ Foto</span>
-  </div>
+      <!-- Foto -->
+      <div class="header-avatar" (click)="triggerFotoInput()">
+        <img *ngIf="foto" [src]="foto" alt="Foto" class="avatar-img" />
+        <span *ngIf="!foto" class="avatar-sem-foto">+ Foto</span>
+      </div>
 
-    <button class="btn-senha" (click)="alterarSenha()">Trocar Senha</button>
-    <button class="btn-sair" (click)="sair()">Sair</button>
-  </div>
+      <button class="btn-senha" (click)="alterarSenha()">Trocar Senha</button>
+      <button class="btn-sair" (click)="sair()">Sair</button>
+    </div>
 
-  <input
-    type="file"
-    #fotoInput
-    accept="image/*"
-    style="display:none"
-    (change)="onFotoSelecionada($event)"
-  />
+    <input
+      type="file"
+      #fotoInput
+      accept="image/*"
+      style="display:none"
+      (change)="onFotoSelecionada($event)"
+    />
 
-</header>
+  </header>
 
   <main class="home-main">
 
@@ -45,76 +45,128 @@
 
     <!-- CLIENTE -->
     @if (usuario?.tipoUsuario === 'CLIENTE') {
-      <p class="actions-title">O que deseja fazer?</p>
-      <div class="actions-grid">
 
-        <button class="action-card deposito" (click)="abrirMovimentacao('DEPOSITO')">
-          <div class="card-icon-wrap">💰</div>
-          <span class="card-label">Depositar</span>
-          <span class="card-desc">Adicionar saldo</span>
-        </button>
-
-        <button class="action-card saque" (click)="abrirMovimentacao('SAQUE')">
-          <div class="card-icon-wrap">💸</div>
-          <span class="card-label">Sacar</span>
-          <span class="card-desc">Retirar dinheiro</span>
-        </button>
-
-        <button class="action-card transf" (click)="abrirMovimentacao('TRANSFERENCIA')">
-          <div class="card-icon-wrap">🔄</div>
-          <span class="card-label">Transferir</span>
-          <span class="card-desc">Enviar via PIX</span>
-        </button>
-
-        <button class="action-card invest" (click)="abrirMovimentacao('INVESTIMENTO')">
-          <div class="card-icon-wrap">📈</div>
-          <span class="card-label">Investir</span>
-          <span class="card-desc">Fazer render</span>
-        </button>
-
-        <button class="action-card meus-invest" (click)="abrirMeusInvestimentos()">
-          <div class="card-icon-wrap">📊</div>
-          <span class="card-label">Meus Investimentos</span>
-          <span class="card-desc">Resgatar saldo</span>
-        </button>
-
+    <!-- Dashboard de Saldo -->
+    <div class="dashboard-saldo">
+      @if (carregandoDashboard) {
+      <div class="dashboard-card dashboard-loading">Carregando saldo...</div>
+      } @else if (dashboard) {
+      <div class="dashboard-card dashboard-card-saldo">
+        <span class="dashboard-label">Saldo disponível</span>
+        <span class="dashboard-valor">{{ formatarMoeda(dashboard.saldo) }}</span>
       </div>
+      <div class="dashboard-card dashboard-card-investido">
+        <span class="dashboard-label">Total investido</span>
+        <span class="dashboard-valor">{{ formatarMoeda(dashboard.totalInvestido) }}</span>
+      </div>
+      }
+    </div>
+
+    <p class="actions-title">O que deseja fazer?</p>
+    <div class="actions-grid">
+
+      <button class="action-card deposito" (click)="abrirMovimentacao('DEPOSITO')">
+        <div class="card-icon-wrap">💰</div>
+        <span class="card-label">Depositar</span>
+        <span class="card-desc">Adicionar saldo</span>
+      </button>
+
+      <button class="action-card saque" (click)="abrirMovimentacao('SAQUE')">
+        <div class="card-icon-wrap">💸</div>
+        <span class="card-label">Sacar</span>
+        <span class="card-desc">Retirar dinheiro</span>
+      </button>
+
+      <button class="action-card transf" (click)="abrirMovimentacao('TRANSFERENCIA')">
+        <div class="card-icon-wrap">🔄</div>
+        <span class="card-label">Transferir</span>
+        <span class="card-desc">Enviar via PIX</span>
+      </button>
+
+      <button class="action-card invest" (click)="abrirMovimentacao('INVESTIMENTO')">
+        <div class="card-icon-wrap">📈</div>
+        <span class="card-label">Investir</span>
+        <span class="card-desc">Fazer render</span>
+      </button>
+
+      <button class="action-card meus-invest" (click)="abrirMeusInvestimentos()">
+        <div class="card-icon-wrap">📊</div>
+        <span class="card-label">Meus Investimentos</span>
+        <span class="card-desc">Resgatar saldo</span>
+      </button>
+
+      <button class="action-card chaves" (click)="abrirMinhasChaves()">
+        <div class="card-icon-wrap">🔑</div>
+        <span class="card-label">Minhas Chaves Pix</span>
+        <span class="card-desc">Gerenciar chaves</span>
+      </button>
+
+    </div>
+
+    <!-- Últimas movimentações -->
+    <div class="extrato-section">
+      <p class="actions-title">Últimas movimentações</p>
+
+      @if (carregandoExtrato) {
+        <div class="extrato-loading">Carregando movimentações...</div>
+      } @else if (extrato.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">🧾</div>
+          <p>Nenhuma movimentação até agora</p>
+        </div>
+      } @else {
+        <div class="extrato-list">
+          @for (mov of extrato; track $index) {
+          <div class="extrato-item">
+            <div class="extrato-icon">{{ iconeMovimentacao(mov.tipoMovimentacao) }}</div>
+            <div class="extrato-info">
+              <span class="extrato-titulo">{{ rotuloMovimentacao(mov.tipoMovimentacao) }}</span>
+              <span class="extrato-data">{{ formatarData(mov.dataMovimentacao) }}</span>
+            </div>
+            <span class="extrato-valor" [class.negativo]="mov.valor < 0">
+              {{ mov.valor < 0 ? '- ' : '+ ' }}{{ formatarMoeda(valorAbsoluto(mov.valor)) }}
+            </span>
+          </div>
+          }
+        </div>
+      }
+    </div>
     }
 
     <!-- GERENTE -->
     @if (usuario?.tipoUsuario === 'GERENTE') {
-      <div class="section-header">
-        <span class="section-title">Solicitações Pendentes</span>
-        @if (pendentes.length > 0) {
-          <span class="badge-count">{{ pendentes.length }}</span>
-        }
+    <div class="section-header">
+      <span class="section-title">Solicitações Pendentes</span>
+      @if (pendentes.length > 0) {
+      <span class="badge-count">{{ pendentes.length }}</span>
+      }
+    </div>
+
+    @if (mensagemSucesso) {
+    <div class="msg-sucesso">✓ {{ mensagemSucesso }}</div>
+    }
+
+    @if (pendentes.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">✅</div>
+      <p>Nenhuma solicitação pendente</p>
+    </div>
+    } @else {
+    <div class="pendentes-list">
+      @for (p of pendentes; track p.id) {
+      <div class="pendente-card">
+        <div class="pendente-avatar">{{ p.nome | slice:0:1 }}</div>
+        <div class="pendente-info">
+          <p class="pendente-nome">{{ p.nome }}</p>
+          <p class="pendente-email">{{ p.email }}</p>
+        </div>
+        <button class="btn-aprovar" (click)="aprovar(p.id)" [disabled]="carregando">
+          Aprovar
+        </button>
       </div>
-
-      @if (mensagemSucesso) {
-        <div class="msg-sucesso">✓ {{ mensagemSucesso }}</div>
       }
-
-      @if (pendentes.length === 0) {
-        <div class="empty-state">
-          <div class="empty-icon">✅</div>
-          <p>Nenhuma solicitação pendente</p>
-        </div>
-      } @else {
-        <div class="pendentes-list">
-          @for (p of pendentes; track p.id) {
-            <div class="pendente-card">
-              <div class="pendente-avatar">{{ p.nome | slice:0:1 }}</div>
-              <div class="pendente-info">
-                <p class="pendente-nome">{{ p.nome }}</p>
-                <p class="pendente-email">{{ p.email }}</p>
-              </div>
-              <button class="btn-aprovar" (click)="aprovar(p.id)" [disabled]="carregando">
-                Aprovar
-              </button>
-            </div>
-          }
-        </div>
-      }
+    </div>
+    }
     }
 
   </main>

@@ -7,4 +7,6 @@ public class ChaveTransferenciaDTO {
     private Integer id;
 
     private String chave;
+
+    private boolean ativo;
 }

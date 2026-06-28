@@ -269,6 +269,19 @@
   margin: 5px 0 0;
 }
 
+.link-chaves {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #534AB7;
+  text-decoration: none;
+  margin: 12px 0 16px;
+}
+
+.link-chaves:hover {
+  text-decoration: underline;
+}
+
 .row2 {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -1,7 +1,7 @@
 package com.ifsp.ifBank.serverIfBank.controller;
 
-
 import com.ifsp.ifBank.serverIfBank.model.Conta;
+import com.ifsp.ifBank.serverIfBank.model.dto.DashboardDTO;
 import com.ifsp.ifBank.serverIfBank.service.AdminService;
 import com.ifsp.ifBank.serverIfBank.service.ContaService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +23,12 @@ public class ContaController {
         Conta conta = contaService.findByUsuarioId(usuarioId);
         if (conta == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(conta);
+    }
+
+    @GetMapping("/dashboard/{usuarioId}")
+    public ResponseEntity<DashboardDTO> buscarDashboard(@PathVariable("usuarioId") Integer usuarioId) {
+        DashboardDTO dashboard = contaService.buscarDashboard(usuarioId);
+        if (dashboard == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(dashboard);
     }
 }

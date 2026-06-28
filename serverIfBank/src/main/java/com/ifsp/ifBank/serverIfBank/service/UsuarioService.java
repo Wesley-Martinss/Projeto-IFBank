@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ifsp.ifBank.serverIfBank.security.JwtService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ifsp.ifBank.serverIfBank.model.Usuario;
@@ -26,6 +27,7 @@ public class UsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final ContaService contaService;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
 
     public List<UsuarioDTO> todosOsUsuariosDTOS() {
@@ -38,8 +40,12 @@ public class UsuarioService {
 
 
     public UsuarioDTO login(LoginDTO loginDTO) {
-        Usuario usuario = usuarioRepository.findByEmailAndSenha(loginDTO.getEmail(), loginDTO.getSenha())
+        Usuario usuario = usuarioRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("E-mail ou senha incorretos!"));
+
+        if (!passwordEncoder.matches(loginDTO.getSenha(), usuario.getSenha())) {
+            throw new RuntimeException("E-mail ou senha incorretos!");
+        }
 
         if (usuario.getStatusConta() != StatusConta.ATIVA) {
             throw new RuntimeException("Conta não está ativa!");
@@ -55,11 +61,17 @@ public class UsuarioService {
     }
 
     public UsuarioDTO cadastrar (Usuario usuario){
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new RuntimeException("Já existe uma conta cadastrada com este e-mail.");
+        }
+
         usuario.setTipoUsuario(TipoUsuario.CLIENTE);
-        
+
         usuario.setStatusConta(StatusConta.PENDENTE_APROVACAO);
-        
+
         usuario.setAtivo(true);
+
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 
         usuario.setDataCadastro(LocalDateTime.now());
 
