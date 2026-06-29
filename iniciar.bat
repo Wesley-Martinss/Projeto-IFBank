@@ -7,27 +7,48 @@ echo         IFBank - Iniciando Sistema
 echo ============================================
 echo.
 
-echo [1/3] Iniciando MySQL...
+echo [1/5] Liberando portas 8080 e 4200...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8080 "') do (
+    if not "%%a"=="0" taskkill /PID %%a /F >nul 2>&1
+)
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":4200 "') do (
+    if not "%%a"=="0" taskkill /PID %%a /F >nul 2>&1
+)
+echo  Portas liberadas.
+
+echo.
+echo [2/5] Iniciando MySQL...
 net start MySQL80 >nul 2>&1
 if %errorlevel% equ 0 (
     echo  MySQL80 iniciado.
-    goto :backend
+    goto :deps
 )
 net start MySQL >nul 2>&1
 if %errorlevel% equ 0 (
     echo  MySQL iniciado.
-    goto :backend
+    goto :deps
 )
 echo  MySQL ja esta rodando ou servico nao encontrado. Continuando...
 
-:backend
+:deps
 echo.
-echo [2/3] Iniciando Backend (Spring Boot)...
+echo [3/5] Verificando dependencias do Frontend...
+if not exist "%~dp0frontIfBank\node_modules" (
+    echo  node_modules nao encontrado. Instalando dependencias...
+    cd /d "%~dp0frontIfBank"
+    npm install
+    echo  Dependencias instaladas.
+) else (
+    echo  Dependencias ja instaladas.
+)
+
+echo.
+echo [4/5] Iniciando Backend (Spring Boot)...
 start "IFBank - Backend" cmd /k "cd /d "%~dp0serverIfBank" && gradlew.bat bootRun"
 echo  Backend iniciando em http://localhost:8080
 echo.
 
-echo [3/3] Iniciando Frontend (Angular)...
+echo [5/5] Iniciando Frontend (Angular)...
 start "IFBank - Frontend" cmd /k "cd /d "%~dp0frontIfBank" && npm start"
 echo  Frontend iniciando em http://localhost:4200
 echo.
