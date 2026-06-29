@@ -1,91 +1,128 @@
-<div class="cadastro-page">
+<div class="auth-shell">
 
-  <!-- Painel esquerdo -->
-  <div class="cadastro-side">
-    <div class="side-circle side-circle-1"></div>
-    <div class="side-circle side-circle-2"></div>
-    <div class="side-logo">🏦</div>
-    <h1 class="side-brand">IFSPBank</h1>
-    <p class="side-tagline">Sua conta bancária<br>pronta em minutos</p>
-  </div>
+  <!-- Painel de marca (telas largas) -->
+  <aside class="auth-brand">
+    <span class="auth-brand__deco auth-brand__deco--1"></span>
+    <span class="auth-brand__deco auth-brand__deco--2"></span>
+
+    <div class="auth-brand__top">
+      <span class="auth-brand__logo"><app-icon name="bank" [size]="26"></app-icon></span>
+      <span class="auth-brand__name">IF<strong>Bank</strong></span>
+    </div>
+
+    <div class="auth-brand__center">
+      <h1 class="auth-brand__headline">Sua conta pronta em minutos.</h1>
+      <p class="auth-brand__sub">Cadastre-se e aproveite uma experiência bancária moderna e segura.</p>
+    </div>
+
+    <div class="auth-brand__features">
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="check-circle" [size]="20"></app-icon></span>
+        Abertura de conta sem burocracia
+      </div>
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="key" [size]="20"></app-icon></span>
+        Chaves PIX personalizadas
+      </div>
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="shield" [size]="20"></app-icon></span>
+        Seus dados protegidos
+      </div>
+    </div>
+  </aside>
 
   <!-- Formulário -->
-  <div class="cadastro-main">
-    <div class="cadastro-card">
+  <main class="auth-panel">
+    <div class="auth-card auth-card--wide ui-animate-in">
 
-      <div class="card-logo-mobile">
-        <div class="card-logo-icon">🏦</div>
-        <span class="card-logo-name">IFSPBank</span>
+      <div class="auth-mobile-brand">
+        <span class="auth-mobile-brand__logo"><app-icon name="bank" [size]="22"></app-icon></span>
+        <span class="auth-mobile-brand__name">IF<strong>Bank</strong></span>
       </div>
 
-      <h2 class="cadastro-heading">Criar conta</h2>
-      <p class="cadastro-sub">Preencha seus dados para começar</p>
+      <div class="auth-head">
+        <h2 class="auth-head__title">Criar conta</h2>
+        <p class="auth-head__sub">Preencha seus dados para começar</p>
+      </div>
+
+      @if (sucesso) {
+        <div class="ui-alert ui-alert--success" role="status"><app-icon name="check-circle" [size]="18"></app-icon><span>{{ sucesso }}</span></div>
+      }
+      @if (erro) {
+        <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erro }}</span></div>
+      }
 
       <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
 
-        <div class="field">
-          <label>Nome completo</label>
-          <input type="text" formControlName="nome" placeholder="Seu nome completo" />
+        <div class="ui-field">
+          <label class="ui-label">Nome completo</label>
+          <input class="ui-input" type="text" formControlName="nome" autocomplete="name" placeholder="Seu nome completo" />
         </div>
 
-        <div class="field">
-          <label>E-mail</label>
-          <input type="email" formControlName="email" placeholder="seu@email.com" />
+        <div class="ui-field">
+          <label class="ui-label">E-mail</label>
+          <input class="ui-input" type="email" inputmode="email" formControlName="email" autocomplete="email" placeholder="seu@email.com" />
         </div>
 
-        <div class="field-row">
-          <div class="field">
-            <label>Senha</label>
-            <input type="password" formControlName="senha" placeholder="••••••••" />
-          </div>
-          <div class="field">
-            <label>CPF</label>
-            <input type="text" formControlName="cpf" placeholder="000.000.000-00" />
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label>Data de nascimento</label>
-            <input type="date" formControlName="dataNascimento" />
-          </div>
-          <div class="field">
-            <label>Telefone</label>
-            <input type="text" formControlName="telefone" placeholder="(11) 99999-9999" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Endereço</label>
-          <input type="text" formControlName="endereco" placeholder="Rua, número, cidade" />
-        </div>
-
-      <!-- ✅ ADICIONAR antes do botão submit -->
-        <div class="field">
-          <label>Foto de perfil</label>
-          <div class="foto-upload" (click)="fotoInput.click()">
-            <img *ngIf="fotoPreview" [src]="fotoPreview" class="foto-preview" alt="Preview" />
-            <div *ngIf="!fotoPreview" class="foto-placeholder">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#aaa" viewBox="0 0 24 24">
-                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12Zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8Z"/>
-              </svg>
-              <span>Clique para adicionar foto</span>
+        <div class="form-grid-2">
+          <div class="ui-field">
+            <label class="ui-label">Senha</label>
+            <div class="ui-input-wrap">
+              <input class="ui-input" [type]="mostrarSenha ? 'text' : 'password'" formControlName="senha"
+                     autocomplete="new-password" placeholder="Crie uma senha" />
+              <button type="button" class="ui-input-icon" (click)="mostrarSenha = !mostrarSenha"
+                      [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'">
+                <app-icon [name]="mostrarSenha ? 'eye-off' : 'eye'" [size]="20"></app-icon>
+              </button>
             </div>
-            <div *ngIf="fotoPreview" class="foto-trocar">Trocar foto</div>
+          </div>
+          <div class="ui-field">
+            <label class="ui-label">CPF</label>
+            <input class="ui-input" type="text" inputmode="numeric" formControlName="cpf" placeholder="000.000.000-00" />
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="ui-field">
+            <label class="ui-label">Data de nascimento</label>
+            <input class="ui-input" type="date" formControlName="dataNascimento" />
+          </div>
+          <div class="ui-field">
+            <label class="ui-label">Telefone</label>
+            <input class="ui-input" type="tel" inputmode="tel" formControlName="telefone" placeholder="(11) 99999-9999" />
+          </div>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-label">Endereço</label>
+          <input class="ui-input" type="text" formControlName="endereco" autocomplete="street-address" placeholder="Rua, número, cidade" />
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-label">Foto de perfil <span class="ui-help" style="font-weight:400">(opcional)</span></label>
+          <div class="foto-upload" (click)="fotoInput.click()">
+            @if (fotoPreview) {
+              <img [src]="fotoPreview" class="foto-preview" alt="Pré-visualização da foto" />
+              <span class="foto-trocar">Trocar foto</span>
+            } @else {
+              <span class="foto-ic"><app-icon name="camera" [size]="24"></app-icon></span>
+              <span class="foto-text">Clique para adicionar uma foto</span>
+            }
           </div>
           <input #fotoInput type="file" accept="image/*" style="display:none" (change)="onFotoSelecionada($event)" />
         </div>
 
-        <button type="submit" class="btn-cadastrar" [disabled]="cadastroForm.invalid">
-          Criar conta
+        <button type="submit" class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" style="margin-top: var(--s-2)"
+                [disabled]="cadastroForm.invalid || carregando">
+          @if (carregando) { <span class="ui-spinner"></span> Criando conta... }
+          @else { Criar conta }
         </button>
 
-        <p class="login-link">
+        <p class="auth-foot">
           Já tem conta? <a routerLink="/login">Entrar</a>
         </p>
-
       </form>
     </div>
-  </div>
+  </main>
 
 </div>

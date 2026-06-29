@@ -1,23 +1,29 @@
-<div class="admin-inv-container">
+<div class="admin-inv">
 
   @if (mensagem) {
-    <div class="alert" [ngClass]="{'alert-error': erro, 'alert-success': !erro}">
-      {{ mensagem }}
+    <div class="ui-alert" [class.ui-alert--error]="erro" [class.ui-alert--success]="!erro" role="status">
+      <app-icon [name]="erro ? 'info' : 'check-circle'" [size]="18"></app-icon>
+      <span>{{ mensagem }}</span>
     </div>
   }
 
-  <div class="form-container">
-    <h3>{{ editando ? 'Editar Produto' : 'Novo Produto' }}</h3>
-    
-    <div class="grid-form">
-      <div class="field">
-        <label>Nome do Produto</label>
-        <input class="input" type="text" [(ngModel)]="produtoAtual.nome" placeholder="Ex: CDB Super IFBank">
+  <div class="admin-inv__grid">
+
+    <!-- Formulário -->
+    <div class="ui-card ui-card--pad admin-inv__form">
+      <h3 class="admin-inv__form-title">
+        <app-icon [name]="editando ? 'edit' : 'plus'" [size]="18"></app-icon>
+        {{ editando ? 'Editar produto' : 'Novo produto' }}
+      </h3>
+
+      <div class="ui-field">
+        <label class="ui-label">Nome do produto</label>
+        <input class="ui-input" type="text" [(ngModel)]="produtoAtual.nome" placeholder="Ex: CDB Super IFBank" />
       </div>
 
-      <div class="field">
-        <label>Tipo de Investimento</label>
-        <select class="input" [(ngModel)]="produtoAtual.tipoInvestimento">
+      <div class="ui-field">
+        <label class="ui-label">Tipo de investimento</label>
+        <select class="ui-select" [(ngModel)]="produtoAtual.tipoInvestimento">
           <option value="POUPANCA">Poupança</option>
           <option value="CDB">CDB</option>
           <option value="LCI">LCI</option>
@@ -27,75 +33,81 @@
         </select>
       </div>
 
-      <div class="field">
-        <label>Taxa Rendimento (%) por Minuto</label>
-        <input class="input" type="number" [(ngModel)]="produtoAtual.taxaRendimentoMinuto" step="0.01">
+      <div class="admin-inv__form-row">
+        <div class="ui-field">
+          <label class="ui-label">Taxa (%) / minuto</label>
+          <input class="ui-input" type="number" [(ngModel)]="produtoAtual.taxaRendimentoMinuto" step="0.01" />
+        </div>
+        <div class="ui-field">
+          <label class="ui-label">Prazo (minutos)</label>
+          <input class="ui-input" type="number" [(ngModel)]="produtoAtual.prazoMinutos" />
+        </div>
       </div>
 
-      <div class="field">
-        <label>Prazo em Minutos</label>
-        <input class="input" type="number" [(ngModel)]="produtoAtual.prazoMinutos">
+      <div class="ui-field">
+        <label class="ui-label">Valor mínimo (R$)</label>
+        <input class="ui-input" type="number" [(ngModel)]="produtoAtual.valorMinimo" step="0.01" />
       </div>
 
-      <div class="field">
-        <label>Valor Mínimo (R$)</label>
-        <input class="input" type="number" [(ngModel)]="produtoAtual.valorMinimo" step="0.01">
-      </div>
+      <label class="admin-inv__check">
+        <input type="checkbox" [(ngModel)]="produtoAtual.ativo" />
+        <span>Produto ativo (disponível para os clientes)</span>
+      </label>
 
-      <div class="field checkbox-field">
-        <label>
-          <input type="checkbox" [(ngModel)]="produtoAtual.ativo">
-          Produto Ativo (Disponível para os clientes)
-        </label>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="btn-primary" (click)="salvar()">Salvar Produto</button>
-      @if (editando) {
-        <button class="btn-secondary" (click)="cancelar()">Cancelar</button>
-      }
-    </div>
-  </div>
-
-  <div class="list-container">
-    <h3>Produtos Cadastrados</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Tipo</th>
-          <th>Taxa /min</th>
-          <th>Prazo</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (p of produtos; track p.id) {
-          <tr>
-            <td>{{ p.id }}</td>
-            <td>{{ p.nome }}</td>
-            <td>{{ p.tipoInvestimento }}</td>
-            <td>{{ p.taxaRendimentoMinuto }}%</td>
-            <td>{{ p.prazoMinutos }} min</td>
-            <td>
-              <span class="badge" [ngClass]="p.ativo ? 'badge-active' : 'badge-inactive'">
-                {{ p.ativo ? 'Ativo' : 'Inativo' }}
-              </span>
-            </td>
-            <td class="action-buttons">
-              <button class="btn-icon edit" (click)="editar(p)">✎</button>
-              <button class="btn-icon delete" (click)="excluir(p.id)">✖</button>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="7" class="empty-state">Nenhum produto cadastrado ainda.</td>
-          </tr>
+      <div class="admin-inv__actions">
+        <button class="ui-btn ui-btn--primary" (click)="salvar()">
+          <app-icon name="check" [size]="18"></app-icon> Salvar produto
+        </button>
+        @if (editando) {
+          <button class="ui-btn ui-btn--ghost" (click)="cancelar()">Cancelar</button>
         }
-      </tbody>
-    </table>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="admin-inv__list">
+      <h3 class="admin-inv__form-title">Produtos cadastrados</h3>
+      <div class="ui-card table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Nome</th><th>Tipo</th><th>Taxa /min</th><th>Prazo</th><th>Status</th><th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of produtos; track p.id) {
+              <tr>
+                <td data-label="ID">{{ p.id }}</td>
+                <td data-label="Nome">{{ p.nome }}</td>
+                <td data-label="Tipo">{{ p.tipoInvestimento }}</td>
+                <td data-label="Taxa /min">{{ p.taxaRendimentoMinuto }}%</td>
+                <td data-label="Prazo">{{ p.prazoMinutos }} min</td>
+                <td data-label="Status">
+                  <span class="ui-badge" [class.ui-badge--success]="p.ativo" [class.ui-badge--muted]="!p.ativo">
+                    {{ p.ativo ? 'Ativo' : 'Inativo' }}
+                  </span>
+                </td>
+                <td data-label="Ações">
+                  <div class="admin-inv__row-actions">
+                    <button class="admin-inv__btn" (click)="editar(p)" aria-label="Editar"><app-icon name="edit" [size]="16"></app-icon></button>
+                    <button class="admin-inv__btn admin-inv__btn--danger" (click)="excluir(p.id)" aria-label="Excluir"><app-icon name="trash" [size]="16"></app-icon></button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7">
+                  <div class="ui-empty" style="padding: var(--s-6)">
+                    <div class="ui-empty__icon"><app-icon name="invest" [size]="24"></app-icon></div>
+                    <p class="ui-empty__title">Nenhum produto cadastrado</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>

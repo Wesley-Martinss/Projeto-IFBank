@@ -1,254 +1,53 @@
-.chaves-page {
-  padding: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
-  font-family: 'Inter', sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-}
+/* Minhas chaves PIX — design system (.ui-*) + estilos específicos */
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-}
+.chaves { max-width: 720px; }
+.chaves-criar { margin-bottom: var(--s-8); }
 
-.header h2 {
-  font-size: 24px;
-  color: #111;
-  margin: 0;
-}
-
-.btn-voltar {
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.btn-voltar:hover {
-  background: #eee;
-  color: #111;
-}
-
-.btn-atualizar {
-  background-color: #EEEDFE;
-  color: #534AB7;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-atualizar:hover:not([disabled]) {
-  background-color: #d8d6fc;
-}
-
-.btn-atualizar[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.alert {
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-}
-
-.alert.success {
-  background-color: #EAF3DE;
-  color: #3B6D11;
-  border: 1px solid #c9e2b1;
-}
-
-.alert.error {
-  background-color: #FAECE7;
-  color: #993C1D;
-  border: 1px solid #f2c7b8;
-}
-
-.main-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.card-criar,
-.lista-chaves {
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.card-criar h3,
-.lista-chaves h3 {
-  margin: 0 0 1rem 0;
-  font-size: 18px;
-  color: #111;
-}
-
+/* Seletor de tipo */
 .tipos-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-2);
+  margin-bottom: var(--s-4);
 }
-
 .tipo-btn {
-  background: #f8f9fa;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 12px 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #555;
-  cursor: pointer;
-  transition: all 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: var(--s-3); cursor: pointer;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  color: var(--text-sec); font-weight: 600; font-size: 0.85rem;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.tipo-btn:hover { border-color: var(--navy-500); color: var(--text); }
+.tipo-btn:active { transform: scale(0.97); }
+.tipo-btn.is-active {
+  border-color: var(--primary); background: var(--navy-050); color: var(--navy-800);
+  box-shadow: 0 0 0 3px rgba(43,64,128,0.10);
 }
 
-.tipo-btn:hover {
-  background: #EEEDFE;
-}
-
-.tipo-btn.ativo {
-  background: #EEEDFE;
-  border-color: #534AB7;
-  color: #534AB7;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 1.25rem;
-}
-
-.field label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #555;
-}
-
-.field input {
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 15px;
-}
-
-.field input:focus {
-  outline: none;
-  border-color: #534AB7;
-}
-
-.aleatoria-info {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 1.25rem;
-}
-
-.btn-primary {
-  width: 100%;
-  background-color: #EC0000;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary:hover:not([disabled]) {
-  background-color: #cc0000;
-}
-
-.btn-primary[disabled] {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.loading-state {
-  color: #666;
-  padding: 1rem 0;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 2.5rem 1rem;
-}
-
-.empty-icon {
-  font-size: 40px;
-  margin-bottom: 0.75rem;
-}
-
-.empty-state p {
-  color: #666;
-}
-
-.chaves-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
+/* Lista de chaves */
+.chaves-grid { display: flex; flex-direction: column; gap: var(--s-3); }
 .chave-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 12px 16px;
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
 }
-
-.chave-valor {
-  font-size: 14px;
-  color: #333;
-  font-weight: 600;
-  word-break: break-all;
+.chave-card--skeleton { box-shadow: none; border: none; }
+.chave-card__ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: var(--r-sm); flex: none;
+  background: var(--gold-100); color: var(--gold-600);
 }
-
-.chave-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+.chave-card__valor {
+  flex: 1; min-width: 0; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-
-.btn-copiar,
-.btn-remover {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
+.chave-card__actions { display: flex; gap: var(--s-1); flex: none; }
+.chave-card__btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border: none; border-radius: var(--r-sm);
+  background: var(--surface-3); color: var(--text-sec); cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
+.chave-card__btn:hover { background: var(--navy-100); color: var(--navy-700); }
+.chave-card__btn--danger:hover { background: var(--danger-bg); color: var(--danger); }
 
-.btn-copiar:hover {
-  background: #EEEDFE;
-  border-color: #534AB7;
-}
-
-.btn-remover:hover {
-  background: #FAECE7;
-  border-color: #993C1D;
-}
-
-@media (max-width: 640px) {
-  .tipos-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+@media (max-width: 520px) {
+  .tipos-grid { grid-template-columns: repeat(2, 1fr); }
 }

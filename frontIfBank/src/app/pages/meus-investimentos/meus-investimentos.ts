@@ -2,11 +2,13 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { InvestimentoService, InvestimentoDTO } from '../../services/investimento.service';
+import { IconComponent } from '../../shared/icon/icon';
+import { TopbarComponent } from '../../shared/topbar/topbar';
 
 @Component({
   selector: 'app-meus-investimentos',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, IconComponent, TopbarComponent],
   templateUrl: './meus-investimentos.html',
   styleUrl: './meus-investimentos.css'
 })
@@ -71,5 +73,15 @@ export class MeusInvestimentosComponent implements OnInit {
 
   voltar() {
     this.router.navigate(['/home']);
+  }
+
+  /** Percentual real de rendimento sobre o valor investido. */
+  percentualRendimento(inv: InvestimentoDTO): number {
+    if (!inv.valorInvestido) return 0;
+    return (inv.rendimentoAcumulado / inv.valorInvestido) * 100;
+  }
+
+  totalDisponivel(inv: InvestimentoDTO): number {
+    return inv.valorInvestido + inv.rendimentoAcumulado;
   }
 }

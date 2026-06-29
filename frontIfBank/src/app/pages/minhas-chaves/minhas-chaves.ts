@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { IconComponent, IconName } from '../../shared/icon/icon';
+import { TopbarComponent } from '../../shared/topbar/topbar';
 import {
   ChaveTransferenciaDTO,
   ChaveTransferenciaService,
@@ -12,7 +14,7 @@ import {
 @Component({
   selector: 'app-minhas-chaves',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IconComponent, TopbarComponent],
   templateUrl: './minhas-chaves.html',
   styleUrl: './minhas-chaves.css',
 })
@@ -119,4 +121,11 @@ export class MinhasChavesComponent implements OnInit {
   voltar() {
     this.router.navigate(['/home']);
   }
+
+  readonly tipos: { tipo: TipoChave; label: string; icon: IconName }[] = [
+    { tipo: 'EMAIL', label: 'E-mail', icon: 'mail' },
+    { tipo: 'CPF', label: 'CPF', icon: 'id' },
+    { tipo: 'TELEFONE', label: 'Telefone', icon: 'phone' },
+    { tipo: 'ALEATORIA', label: 'Aleatória', icon: 'dice' },
+  ];
 }

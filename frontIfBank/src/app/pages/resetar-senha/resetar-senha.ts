@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { IconComponent } from '../../shared/icon/icon';
 
 @Component({
   selector: 'app-resetar-senha',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, IconComponent],
   templateUrl: './resetar-senha.html',
   styleUrl: './resetar-senha.css'
 })
@@ -20,11 +21,13 @@ export class ResetarSenhaComponent implements OnInit {
   concluido = false;
   tokenInvalido = false;
   erro = '';
+  mostrarSenha = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -39,18 +42,22 @@ export class ResetarSenhaComponent implements OnInit {
 
     if (!this.senhaAtual || !this.novaSenha || !this.confirmarSenha) {
       this.erro = 'Preencha todos os campos';
+      this.cdr.detectChanges();
       return;
     }
     if (this.novaSenha !== this.confirmarSenha) {
       this.erro = 'As senhas não coincidem';
+      this.cdr.detectChanges();
       return;
     }
     if (this.novaSenha.length < 6) {
       this.erro = 'A nova senha deve ter no mínimo 6 caracteres';
+      this.cdr.detectChanges();
       return;
     }
 
     this.carregando = true;
+    this.cdr.detectChanges();
 
     const resultado = await this.authService.redefinirSenha(
       this.token,
@@ -66,6 +73,8 @@ export class ResetarSenhaComponent implements OnInit {
     }
 
     this.carregando = false;
+    // fetch nativo roda fora da zona do Angular; força a atualização da tela
+    this.cdr.detectChanges();
   }
 
   irParaEsqueci() {

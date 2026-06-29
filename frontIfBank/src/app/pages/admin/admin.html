@@ -1,97 +1,59 @@
-<div class="admin-wrapper">
+<div class="ui-page">
 
-  <!-- Header -->
-  <header class="admin-header">
-    <div class="admin-header-left">
-      <span class="admin-logo">🏦</span>
-      <div>
-        <h1 class="admin-title">IFSPBank</h1>
-        <span class="admin-subtitle">Painel Administrativo</span>
-      </div>
-    </div>
-    <button class="btn-sair" (click)="sair()">Sair</button>
-  </header>
+  <app-topbar [showLogout]="true" title="Painel administrativo" (logout)="sair()"></app-topbar>
 
   <!-- Abas -->
-  <nav class="admin-tabs">
-    <button
-      class="tab-btn"
-      [class.ativa]="abaAtiva === 'contas'"
-      (click)="mudarAba('contas')"
-    >
-      Contas
-    </button>
-    <button
-      class="tab-btn"
-      [class.ativa]="abaAtiva === 'transacoes'"
-      (click)="mudarAba('transacoes')"
-    >
-      Transações
-    </button>
-    <button
-      class="tab-btn"
-      [class.ativa]="abaAtiva === 'gerentes'"
-      (click)="mudarAba('gerentes')"
-    >
-      Gerentes
-    </button>
-    <button
-      class="tab-btn"
-      [class.ativa]="abaAtiva === 'investimentos'"
-      (click)="mudarAba('investimentos')"
-    >
-      Investimentos
-    </button>
+  <nav class="admin-tabs-wrap">
+    <div class="admin-tabs">
+      @for (aba of abas; track aba.id) {
+        <button class="admin-tab" [class.is-active]="abaAtiva === aba.id" (click)="mudarAba(aba.id)">
+          <app-icon [name]="aba.icon" [size]="18"></app-icon>
+          <span>{{ aba.label }}</span>
+        </button>
+      }
+    </div>
   </nav>
 
-  <!-- Conteúdo -->
-  <main class="admin-content">
+  <main class="ui-container admin-content">
 
     <!-- ABA: Contas -->
     @if (abaAtiva === 'contas') {
-      <section>
-        <div class="secao-header">
-          <h2>Listagem de Contas</h2>
-          <button class="btn-recarregar" (click)="carregarContas()">↻ Atualizar</button>
+      <section class="ui-animate-in">
+        <div class="admin-section-head">
+          <h2 class="ui-title">Contas cadastradas</h2>
+          <button class="ui-btn ui-btn--secondary ui-btn--sm" (click)="carregarContas()">
+            <app-icon name="chart" [size]="16"></app-icon> Atualizar
+          </button>
         </div>
 
         @if (carregandoContas) {
-          <p class="info-texto">Carregando contas...</p>
+          <div class="ui-card ui-empty"><span class="ui-spinner" style="color:var(--primary)"></span></div>
         } @else if (contas.length === 0) {
-          <p class="info-texto">Nenhuma conta cadastrada.</p>
+          <div class="ui-card ui-empty">
+            <div class="ui-empty__icon"><app-icon name="users" [size]="28"></app-icon></div>
+            <p class="ui-empty__title">Nenhuma conta cadastrada</p>
+          </div>
         } @else {
-          <div class="tabela-wrapper">
-            <table class="tabela">
+          <div class="ui-card table-wrap">
+            <table class="table">
               <thead>
                 <tr>
-                  <th>Titular</th>
-                  <th>E-mail</th>
-                  <th>Nº Conta</th>
-                  <th>Agência</th>
-                  <th>Tipo</th>
-                  <th>Saldo</th>
-                  <th>Status</th>
-                  <th>Situação</th>
+                  <th>Titular</th><th>E-mail</th><th>Nº Conta</th><th>Agência</th>
+                  <th>Tipo</th><th>Saldo</th><th>Status</th><th>Situação</th>
                 </tr>
               </thead>
               <tbody>
                 @for (conta of contas; track conta.id) {
                   <tr>
-                    <td>{{ conta.nomeTitular }}</td>
-                    <td>{{ conta.emailTitular }}</td>
-                    <td>{{ conta.numeroConta }}</td>
-                    <td>{{ conta.agencia }}</td>
-                    <td>
-                      <span class="badge badge-tipo">{{ conta.tipoUsuario }}</span>
-                    </td>
-                    <td>{{ formatarValor(conta.saldo) }}</td>
-                    <td>
-                      <span class="badge" [class]="'badge-status-' + conta.statusConta">
-                        {{ conta.statusConta }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="badge" [class]="conta.ativa ? 'badge-ativa' : 'badge-inativa'">
+                    <td data-label="Titular">{{ conta.nomeTitular }}</td>
+                    <td data-label="E-mail">{{ conta.emailTitular }}</td>
+                    <td data-label="Nº Conta">{{ conta.numeroConta }}</td>
+                    <td data-label="Agência">{{ conta.agencia }}</td>
+                    <td data-label="Tipo"><span class="ui-badge ui-badge--navy">{{ conta.tipoUsuario }}</span></td>
+                    <td data-label="Saldo" class="ui-money">{{ formatarValor(conta.saldo) }}</td>
+                    <td data-label="Status"><span class="ui-badge ui-badge--muted">{{ conta.statusConta }}</span></td>
+                    <td data-label="Situação">
+                      <span class="ui-badge" [class.ui-badge--success]="conta.ativa" [class.ui-badge--danger]="!conta.ativa">
                         {{ conta.ativa ? 'Ativa' : 'Inativa' }}
                       </span>
                     </td>
@@ -106,48 +68,43 @@
 
     <!-- ABA: Transações -->
     @if (abaAtiva === 'transacoes') {
-      <section>
-        <div class="secao-header">
-          <h2>Histórico Geral de Transações</h2>
-          <button class="btn-recarregar" (click)="carregarMovimentacoes()">↻ Atualizar</button>
+      <section class="ui-animate-in">
+        <div class="admin-section-head">
+          <h2 class="ui-title">Histórico de transações</h2>
+          <button class="ui-btn ui-btn--secondary ui-btn--sm" (click)="carregarMovimentacoes()">
+            <app-icon name="chart" [size]="16"></app-icon> Atualizar
+          </button>
         </div>
 
         @if (carregandoMovimentacoes) {
-          <p class="info-texto">Carregando transações...</p>
+          <div class="ui-card ui-empty"><span class="ui-spinner" style="color:var(--primary)"></span></div>
         } @else if (movimentacoes.length === 0) {
-          <p class="info-texto">Nenhuma transação registrada.</p>
+          <div class="ui-card ui-empty">
+            <div class="ui-empty__icon"><app-icon name="receipt" [size]="28"></app-icon></div>
+            <p class="ui-empty__title">Nenhuma transação registrada</p>
+          </div>
         } @else {
-          <div class="tabela-wrapper">
-            <table class="tabela">
+          <div class="ui-card table-wrap">
+            <table class="table">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Data / Hora</th>
-                  <th>Tipo</th>
-                  <th>Valor</th>
-                  <th>Conta Origem</th>
-                  <th>Titular Origem</th>
-                  <th>Conta Destino</th>
-                  <th>Titular Destino</th>
-                  <th>Descrição</th>
+                  <th>#</th><th>Data / Hora</th><th>Tipo</th><th>Valor</th>
+                  <th>Conta origem</th><th>Titular origem</th>
+                  <th>Conta destino</th><th>Titular destino</th><th>Descrição</th>
                 </tr>
               </thead>
               <tbody>
                 @for (mov of movimentacoes; track mov.id) {
                   <tr>
-                    <td>{{ mov.id }}</td>
-                    <td>{{ formatarData(mov.dataMovimentacao) }}</td>
-                    <td>
-                      <span class="badge" [class]="'badge-mov-' + mov.tipoMovimentacao">
-                        {{ mov.tipoMovimentacao }}
-                      </span>
-                    </td>
-                    <td>{{ formatarValor(mov.valor) }}</td>
-                    <td>{{ mov.numeroContaOrigem ?? '—' }}</td>
-                    <td>{{ mov.nomeTitularOrigem ?? '—' }}</td>
-                    <td>{{ mov.numeroContaDestino ?? '—' }}</td>
-                    <td>{{ mov.nomeTitularDestino ?? '—' }}</td>
-                    <td>{{ mov.descricao ?? '—' }}</td>
+                    <td data-label="#">{{ mov.id }}</td>
+                    <td data-label="Data">{{ formatarData(mov.dataMovimentacao) }}</td>
+                    <td data-label="Tipo"><span class="ui-badge ui-badge--navy">{{ mov.tipoMovimentacao }}</span></td>
+                    <td data-label="Valor" class="ui-money">{{ formatarValor(mov.valor) }}</td>
+                    <td data-label="Conta origem">{{ mov.numeroContaOrigem }}</td>
+                    <td data-label="Titular origem">{{ mov.nomeTitularOrigem }}</td>
+                    <td data-label="Conta destino">{{ mov.numeroContaDestino ?? '—' }}</td>
+                    <td data-label="Titular destino">{{ mov.nomeTitularDestino ?? '—' }}</td>
+                    <td data-label="Descrição">{{ mov.descricao }}</td>
                   </tr>
                 }
               </tbody>
@@ -159,41 +116,45 @@
 
     <!-- ABA: Gerentes -->
     @if (abaAtiva === 'gerentes') {
-      <section>
-        <div class="secao-header">
-          <h2>Criar Conta de Gerente</h2>
+      <section class="ui-animate-in admin-form-section">
+        <div class="admin-section-head">
+          <h2 class="ui-title">Criar conta de gerente</h2>
         </div>
 
-        <div class="form-card">
+        <div class="ui-card ui-card--pad admin-form">
           @if (mensagemGerente) {
-            <p class="msg-sucesso">✓ {{ mensagemGerente }}</p>
+            <div class="ui-alert ui-alert--success" role="status"><app-icon name="check-circle" [size]="18"></app-icon><span>{{ mensagemGerente }}</span></div>
           }
           @if (erroGerente) {
-            <p class="msg-erro">✗ {{ erroGerente }}</p>
+            <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erroGerente }}</span></div>
           }
 
-          <div class="form-grupo">
-            <label>Nome completo</label>
-            <input type="text" [(ngModel)]="novoGerente.nome" placeholder="Nome do gerente" />
+          <div class="ui-field">
+            <label class="ui-label">Nome completo</label>
+            <input class="ui-input" type="text" [(ngModel)]="novoGerente.nome" placeholder="Nome do gerente" />
+          </div>
+          <div class="ui-field">
+            <label class="ui-label">E-mail</label>
+            <input class="ui-input" type="email" [(ngModel)]="novoGerente.email" placeholder="email@exemplo.com" />
+          </div>
+          <div class="ui-field">
+            <label class="ui-label">CPF</label>
+            <input class="ui-input" type="text" [(ngModel)]="novoGerente.cpf" placeholder="000.000.000-00" />
+          </div>
+          <div class="ui-field">
+            <label class="ui-label">Senha</label>
+            <div class="ui-input-wrap">
+              <input class="ui-input" [type]="mostrarSenhaGerente ? 'text' : 'password'" [(ngModel)]="novoGerente.senha" placeholder="Senha de acesso" />
+              <button type="button" class="ui-input-icon" (click)="mostrarSenhaGerente = !mostrarSenhaGerente"
+                      [attr.aria-label]="mostrarSenhaGerente ? 'Ocultar senha' : 'Mostrar senha'">
+                <app-icon [name]="mostrarSenhaGerente ? 'eye-off' : 'eye'" [size]="20"></app-icon>
+              </button>
+            </div>
           </div>
 
-          <div class="form-grupo">
-            <label>E-mail</label>
-            <input type="email" [(ngModel)]="novoGerente.email" placeholder="email@exemplo.com" />
-          </div>
-
-          <div class="form-grupo">
-            <label>CPF</label>
-            <input type="text" [(ngModel)]="novoGerente.cpf" placeholder="000.000.000-00" />
-          </div>
-
-          <div class="form-grupo">
-            <label>Senha</label>
-            <input type="password" [(ngModel)]="novoGerente.senha" placeholder="Senha de acesso" />
-          </div>
-
-          <button class="btn-criar" (click)="submeterGerente()" [disabled]="criandoGerente">
-            {{ criandoGerente ? 'Criando...' : 'Criar Gerente' }}
+          <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" (click)="submeterGerente()" [disabled]="criandoGerente">
+            @if (criandoGerente) { <span class="ui-spinner"></span> Criando... }
+            @else { <app-icon name="plus" [size]="18"></app-icon> Criar gerente }
           </button>
         </div>
       </section>
@@ -201,10 +162,7 @@
 
     <!-- ABA: Investimentos -->
     @if (abaAtiva === 'investimentos') {
-      <section>
-        <div class="secao-header">
-          <h2>Gerenciar Produtos de Investimento</h2>
-        </div>
+      <section class="ui-animate-in">
         <app-admin-investimentos></app-admin-investimentos>
       </section>
     }

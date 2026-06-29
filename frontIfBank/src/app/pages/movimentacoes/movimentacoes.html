@@ -1,47 +1,32 @@
-<div class="page">
+<div class="ui-page">
 
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="navbar-inner">
-      <a class="btn-voltar" routerLink="/home">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-        Voltar
-      </a>
-      <div class="brand">
-        <div class="brand-icon" [ngStyle]="getIconStyle()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            @if (tipoMovimentacao === 'DEPOSITO') {
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-            }
-            @if (tipoMovimentacao === 'SAQUE') {
-              <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
-            }
-            @if (tipoMovimentacao === 'TRANSFERENCIA') {
-              <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
-            }
-            @if (tipoMovimentacao === 'INVESTIMENTO') {
-              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-            }
-          </svg>
+  <app-topbar [showBack]="true" [title]="getTitulo()" (back)="voltar()"></app-topbar>
+
+  <main class="mov ui-container">
+    <div class="mov-card ui-card ui-card--pad ui-animate-in">
+
+      <!-- Cabeçalho da operação -->
+      @if (!sucesso) {
+        <div class="mov-head">
+          <span class="mov-head__ic" [attr.data-tipo]="tipoMovimentacao">
+            <app-icon [name]="getIconName()" [size]="24"></app-icon>
+          </span>
+          <div>
+            <h2 class="mov-head__title">{{ getTitulo() }}</h2>
+            <p class="mov-head__sub">Preencha os dados da operação</p>
+          </div>
         </div>
-        <span class="brand-name">{{ getTitulo() }}</span>
-      </div>
-      <div style="width:80px"></div>
-    </div>
-  </header>
-
-  <main class="main-content">
-    <div class="card">
+      }
 
       <!-- SUCESSO -->
       @if (sucesso) {
-        <div class="sucesso-wrap">
-          <div class="sucesso-icon">
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div class="ui-empty">
+          <div class="ui-empty__icon" style="background: var(--success-bg); color: var(--success)">
+            <app-icon name="check-circle" [size]="34"></app-icon>
           </div>
-          <h2 class="sucesso-titulo">{{ getTitulo() }} realizada!</h2>
-          <p class="sucesso-sub">Operação concluída com sucesso</p>
-          <a class="btn-primary" routerLink="/home">
+          <p class="ui-empty__title" style="font-size:1.2rem">{{ getTitulo() }} realizada!</p>
+          <p>Operação concluída com sucesso.</p>
+          <a class="ui-btn ui-btn--primary ui-btn--lg" style="margin-top: var(--s-5)" routerLink="/home">
             Voltar ao início
           </a>
         </div>
@@ -52,211 +37,161 @@
 
         <!-- Stepper -->
         <div class="stepper">
-          <div class="step" [class.active]="etapa === 1" [class.done]="etapa > 1">
-            <div class="step-num">
-              @if (etapa > 1) {
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              } @else { 1 }
-            </div>
-            <span class="step-label">Destinatário</span>
+          <div class="step" [class.is-active]="etapa === 1" [class.is-done]="etapa > 1">
+            <span class="step__num">
+              @if (etapa > 1) { <app-icon name="check" [size]="14"></app-icon> } @else { 1 }
+            </span>
+            <span class="step__label">Destinatário</span>
           </div>
-          <div class="step-line" [class.filled]="etapa > 1"></div>
-          <div class="step" [class.active]="etapa === 2" [class.done]="etapa > 2">
-            <div class="step-num">2</div>
-            <span class="step-label">Valores</span>
+          <span class="step__line" [class.is-filled]="etapa > 1"></span>
+          <div class="step" [class.is-active]="etapa === 2">
+            <span class="step__num">2</span>
+            <span class="step__label">Valores</span>
           </div>
         </div>
 
-        <!-- Etapa 1 — buscar destinatário -->
+        <!-- Etapa 1 -->
         @if (etapa === 1) {
           @if (erro) {
-            <div class="alert-erro">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              {{ erro }}
-            </div>
+            <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erro }}</span></div>
           }
-          <div class="field">
-            <label class="label">Chave do destinatário</label>
-            <input
-              class="input"
-              [(ngModel)]="chaveDestinatario"
-              placeholder="CPF, e-mail, telefone ou chave aleatória"
-              autocomplete="off"
-            />
-            <p class="field-hint">Qualquer tipo de chave PIX é aceita</p>
+          <div class="ui-field">
+            <label class="ui-label">Chave do destinatário</label>
+            <input class="ui-input" [(ngModel)]="chaveDestinatario" autocomplete="off"
+                   placeholder="CPF, e-mail, telefone ou chave aleatória" />
+            <span class="ui-help">Qualquer tipo de chave PIX é aceita.</span>
           </div>
-          <a class="link-chaves" routerLink="/minhas-chaves">🔑 Ver minhas chaves Pix</a>
-          <button
-            class="btn-primary"
-            (click)="validarDestinatario()"
-            [disabled]="carregando">
-            @if (carregando) {
-              <span class="spinner"></span> Buscando...
-            } @else {
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              Buscar destinatário
-            }
+          <a class="mov-link" routerLink="/minhas-chaves">
+            <app-icon name="key" [size]="16"></app-icon> Ver minhas chaves PIX
+          </a>
+          <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" (click)="validarDestinatario()" [disabled]="carregando">
+            @if (carregando) { <span class="ui-spinner"></span> Buscando... }
+            @else { <app-icon name="search" [size]="18"></app-icon> Buscar destinatário }
           </button>
         }
 
-        <!-- Etapa 2 — preencher valores -->
+        <!-- Etapa 2 -->
         @if (etapa === 2) {
           <div class="dest-card">
-            <div class="dest-avatar">{{ dadosDestinatario?.nomeContaDestinatario | slice:0:1 }}</div>
-            <div class="dest-info">
-              <p class="dest-nome">{{ dadosDestinatario?.nomeContaDestinatario }}</p>
-              <p class="dest-chave">{{ chaveDestinatario }}</p>
+            <span class="dest-card__avatar">{{ dadosDestinatario?.nomeContaDestinatario | slice:0:1 }}</span>
+            <div class="dest-card__info">
+              <p class="dest-card__name">{{ dadosDestinatario?.nomeContaDestinatario }}</p>
+              <p class="dest-card__key">{{ chaveDestinatario }}</p>
             </div>
-            <div class="dest-check">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
+            <span class="dest-card__check"><app-icon name="check-circle" [size]="20"></app-icon></span>
           </div>
 
           @if (erro) {
-            <div class="alert-erro">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              {{ erro }}
-            </div>
+            <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erro }}</span></div>
           }
 
-          <div class="row2">
-            <div class="field">
-              <label class="label">Valor</label>
-              <div class="input-prefix">
-                <span class="prefix-label">R$</span>
-                <input class="input input-with-prefix" type="number" [(ngModel)]="valor" placeholder="0,00" step="0.01"/>
-              </div>
+          <div class="ui-field">
+            <label class="ui-label">Valor</label>
+            <div class="amount-input">
+              <span class="amount-input__prefix">R$</span>
+              <input class="ui-input amount-input__field" type="number" inputmode="decimal" [(ngModel)]="valor" placeholder="0,00" step="0.01" />
             </div>
           </div>
 
-          <div class="field">
-            <label class="label">Descrição <span class="label-opt">(opcional)</span></label>
-            <input class="input" [(ngModel)]="descricao" placeholder="Para que é esta transferência?"/>
+          <div class="ui-field">
+            <label class="ui-label">Descrição <span class="ui-help" style="font-weight:400">(opcional)</span></label>
+            <input class="ui-input" [(ngModel)]="descricao" placeholder="Para que é esta transferência?" />
           </div>
 
-          <button class="btn-primary" (click)="realizarMovimentacao()" [disabled]="carregando">
-            @if (carregando) {
-              <span class="spinner"></span> Processando...
-            } @else {
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              Transferir agora
-            }
+          <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" (click)="realizarMovimentacao()" [disabled]="carregando">
+            @if (carregando) { <span class="ui-spinner"></span> Processando... }
+            @else { <app-icon name="transfer" [size]="18"></app-icon> Transferir agora }
           </button>
-          <button class="btn-ghost" (click)="etapa = 1; erro = ''">Voltar</button>
+          <button class="ui-btn ui-btn--ghost ui-btn--block" (click)="etapa = 1; erro = ''">Voltar</button>
         }
       }
 
       <!-- DEPÓSITO / SAQUE -->
       @if ((tipoMovimentacao === 'DEPOSITO' || tipoMovimentacao === 'SAQUE') && !sucesso) {
-
         @if (erro) {
-          <div class="alert-erro">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            {{ erro }}
-          </div>
+          <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erro }}</span></div>
         }
-
-        <div class="row2">
-          <div class="field">
-            <label class="label">Valor</label>
-            <div class="input-prefix">
-              <span class="prefix-label">R$</span>
-              <input class="input input-with-prefix" type="number" [(ngModel)]="valor" placeholder="0,00" step="0.01"/>
-            </div>
+        <div class="ui-field">
+          <label class="ui-label">Valor</label>
+          <div class="amount-input">
+            <span class="amount-input__prefix">R$</span>
+            <input class="ui-input amount-input__field" type="number" inputmode="decimal" [(ngModel)]="valor" placeholder="0,00" step="0.01" />
           </div>
         </div>
-
-        <div class="field">
-          <label class="label">Descrição <span class="label-opt">(opcional)</span></label>
-          <input class="input" [(ngModel)]="descricao" placeholder="Motivo da operação"/>
+        <div class="ui-field">
+          <label class="ui-label">Descrição <span class="ui-help" style="font-weight:400">(opcional)</span></label>
+          <input class="ui-input" [(ngModel)]="descricao" placeholder="Motivo da operação" />
         </div>
-
-        <button class="btn-primary" (click)="realizarMovimentacao()" [disabled]="carregando">
-          @if (carregando) {
-            <span class="spinner"></span> Processando...
-          } @else {
-            {{ getBtnLabel() }}
-          }
+        <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" (click)="realizarMovimentacao()" [disabled]="carregando">
+          @if (carregando) { <span class="ui-spinner"></span> Processando... }
+          @else { {{ getBtnLabel() }} }
         </button>
       }
 
       <!-- INVESTIMENTO -->
       @if (tipoMovimentacao === 'INVESTIMENTO' && !sucesso) {
-        
+
         @if (!produtoSelecionado) {
-          <h3>Escolha um produto para investir</h3>
+          <p class="mov-section-title">Escolha um produto para investir</p>
           <div class="produtos-grid">
             @for (p of produtosAtivos; track p.id) {
-              <div class="produto-card" (click)="selecionarProduto(p)">
-                <div class="prod-header">
-                  <h4>{{ p.nome }}</h4>
-                  <span class="badge">{{ p.tipoInvestimento }}</span>
+              <button class="produto-card" (click)="selecionarProduto(p)">
+                <div class="produto-card__head">
+                  <span class="produto-card__name">{{ p.nome }}</span>
+                  <span class="ui-badge ui-badge--gold">{{ p.tipoInvestimento }}</span>
                 </div>
-                <div class="prod-details">
-                  <div class="detail">
-                    <span class="lbl">Rendimento</span>
-                    <span class="val">{{ p.taxaRendimentoMinuto }}% / min</span>
-                  </div>
-                  <div class="detail">
-                    <span class="lbl">Prazo</span>
-                    <span class="val">{{ p.prazoMinutos }} min</span>
-                  </div>
-                  <div class="detail">
-                    <span class="lbl">Mínimo</span>
-                    <span class="val">R$ {{ p.valorMinimo }}</span>
-                  </div>
+                <div class="produto-card__rows">
+                  <div class="produto-card__row"><span>Rendimento</span><strong class="ui-pos">{{ p.taxaRendimentoMinuto }}% / min</strong></div>
+                  <div class="produto-card__row"><span>Prazo</span><strong>{{ p.prazoMinutos }} min</strong></div>
+                  <div class="produto-card__row"><span>Mínimo</span><strong class="ui-money">R$ {{ p.valorMinimo }}</strong></div>
                 </div>
-              </div>
+                <span class="produto-card__cta">Selecionar <app-icon name="chevron-right" [size]="16"></app-icon></span>
+              </button>
             } @empty {
-              <div class="alert-erro">Nenhum investimento disponível no momento.</div>
+              <div class="ui-empty">
+                <div class="ui-empty__icon"><app-icon name="invest" [size]="28"></app-icon></div>
+                <p class="ui-empty__title">Sem investimentos disponíveis</p>
+                <p>Nenhum produto ativo no momento.</p>
+              </div>
             }
           </div>
         } @else {
-          
-          <button class="btn-ghost" (click)="voltarProdutos()" style="margin-bottom: 20px;">
-            ← Voltar para opções
+          <button class="ui-btn ui-btn--ghost ui-btn--sm" style="margin-bottom: var(--s-4)" (click)="voltarProdutos()">
+            <app-icon name="arrow-left" [size]="16"></app-icon> Voltar para opções
           </button>
-          
-          <div class="dest-card" style="margin-bottom: 24px;">
-            <div class="dest-info">
-              <p class="dest-nome">Você está investindo em: {{ produtoSelecionado.nome }}</p>
-              <p class="dest-chave">O valor ficará retido por {{ produtoSelecionado.prazoMinutos }} minutos e renderá {{ produtoSelecionado.taxaRendimentoMinuto }}%.</p>
-            </div>
+
+          <div class="ui-alert ui-alert--info" style="margin-bottom: var(--s-5)">
+            <app-icon name="info" [size]="18"></app-icon>
+            <span>
+              Você está investindo em <strong>{{ produtoSelecionado.nome }}</strong>. O valor ficará retido por
+              {{ produtoSelecionado.prazoMinutos }} minutos e renderá {{ produtoSelecionado.taxaRendimentoMinuto }}% ao minuto.
+            </span>
           </div>
 
           @if (erro) {
-            <div class="alert-erro">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              {{ erro }}
-            </div>
+            <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erro }}</span></div>
           }
 
-          <div class="row2">
-            <div class="field">
-              <label class="label">Valor (Mínimo: R$ {{ produtoSelecionado.valorMinimo }})</label>
-              <div class="input-prefix">
-                <span class="prefix-label">R$</span>
-                <input class="input input-with-prefix" type="number" [(ngModel)]="valor" placeholder="0,00" step="0.01"/>
-              </div>
+          <div class="ui-field">
+            <label class="ui-label">Valor <span class="ui-help" style="font-weight:400">(mínimo R$ {{ produtoSelecionado.valorMinimo }})</span></label>
+            <div class="amount-input">
+              <span class="amount-input__prefix">R$</span>
+              <input class="ui-input amount-input__field" type="number" inputmode="decimal" [(ngModel)]="valor" placeholder="0,00" step="0.01" />
             </div>
           </div>
 
-          <div class="field">
-            <label class="label">Descrição <span class="label-opt">(opcional)</span></label>
-            <input class="input" [(ngModel)]="descricao" placeholder="Objetivo deste investimento"/>
+          <div class="ui-field">
+            <label class="ui-label">Descrição <span class="ui-help" style="font-weight:400">(opcional)</span></label>
+            <input class="ui-input" [(ngModel)]="descricao" placeholder="Objetivo deste investimento" />
           </div>
 
-          <button class="btn-primary" (click)="realizarMovimentacao()" [disabled]="carregando">
-            @if (carregando) {
-              <span class="spinner"></span> Investindo...
-            } @else {
-              Confirmar Investimento
-            }
+          <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" (click)="realizarMovimentacao()" [disabled]="carregando">
+            @if (carregando) { <span class="ui-spinner"></span> Investindo... }
+            @else { <app-icon name="invest" [size]="18"></app-icon> Confirmar investimento }
           </button>
         }
       }
 
     </div>
   </main>
-
 </div>

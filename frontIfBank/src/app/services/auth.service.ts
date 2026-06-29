@@ -15,16 +15,35 @@ export class AuthService {
 
       if (res.status === 200) {
         const usuario: UsuarioDTO = await res.json();
-          localStorage.setItem('token', usuario.token);
-          localStorage.setItem('foto', usuario.foto || '');
-       // somente o token
-       // localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+        // Token é obrigatório para a sessão
+        localStorage.setItem('token', usuario.token);
+        // Foto é best-effort: imagens grandes podem estourar a cota do localStorage.
+        // Uma falha aqui NÃO pode impedir o login.
+        this.salvarFoto(usuario.foto || '');
         return usuario;
       }
       return null;
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       return null;
+    }
+  }
+
+  /**
+   * Salva a foto no localStorage de forma segura.
+   * Fotos muito grandes (base64) podem exceder a cota (~5MB) e lançar
+   * QuotaExceededError — nesse caso, apenas ignoramos para não quebrar o fluxo.
+   * @returns true se conseguiu salvar, false caso contrário.
+   */
+  salvarFoto(foto: string): boolean {
+    try {
+      localStorage.setItem('foto', foto);
+      return true;
+    } catch (e) {
+      console.warn('Foto não pôde ser salva no localStorage (provavelmente muito grande):', e);
+      // Garante estado consistente: remove qualquer foto anterior
+      try { localStorage.removeItem('foto'); } catch {}
+      return false;
     }
   }
 

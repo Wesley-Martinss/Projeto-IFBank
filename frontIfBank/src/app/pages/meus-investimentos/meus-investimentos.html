@@ -1,65 +1,91 @@
-<div class="investimentos-page">
-  <div class="header">
-    <button class="btn-voltar" (click)="voltar()">← Voltar</button>
-    <h2>Meus Investimentos</h2>
-    <button class="btn-atualizar" (click)="carregarInvestimentos()" [disabled]="carregando">
-      🔄 Atualizar Rendimentos
-    </button>
-  </div>
+<div class="ui-page">
 
-  <main class="main-content">
+  <app-topbar [showBack]="true" title="Meus investimentos" (back)="voltar()"></app-topbar>
+
+  <main class="inv ui-container">
+
+    <div class="inv-head">
+      <div>
+        <h1 class="ui-title">Investimentos ativos</h1>
+        <p class="ui-subtle">Acompanhe seus rendimentos em tempo real</p>
+      </div>
+      <button class="ui-btn ui-btn--secondary ui-btn--sm" (click)="carregarInvestimentos()" [disabled]="carregando">
+        @if (carregando) { <span class="ui-spinner" style="width:15px;height:15px"></span> }
+        @else { <app-icon name="chart" [size]="16"></app-icon> }
+        Atualizar
+      </button>
+    </div>
+
     @if (mensagemSucesso) {
-      <div class="alert success">{{ mensagemSucesso }}</div>
+      <div class="ui-alert ui-alert--success" role="status"><app-icon name="check-circle" [size]="18"></app-icon><span>{{ mensagemSucesso }}</span></div>
     }
     @if (erro) {
-      <div class="alert error">{{ erro }}</div>
+      <div class="ui-alert ui-alert--error" role="alert"><app-icon name="info" [size]="18"></app-icon><span>{{ erro }}</span></div>
     }
 
     @if (carregando && investimentos.length === 0) {
-      <div class="loading-state">
-        Carregando investimentos...
+      <div class="inv-grid">
+        @for (i of [1,2]; track i) {
+          <div class="ui-card ui-card--pad">
+            <div class="ui-skeleton" style="width:60%;height:18px;margin-bottom:16px"></div>
+            <div class="ui-skeleton" style="width:100%;height:54px;margin-bottom:12px"></div>
+            <div class="ui-skeleton" style="width:100%;height:44px"></div>
+          </div>
+        }
       </div>
     } @else if (investimentos.length === 0) {
-      <div class="empty-state">
-        <div class="empty-icon">📉</div>
-        <h3>Nenhum investimento ativo</h3>
+      <div class="ui-card ui-empty">
+        <div class="ui-empty__icon"><app-icon name="invest" [size]="28"></app-icon></div>
+        <p class="ui-empty__title">Nenhum investimento ativo</p>
         <p>Você ainda não possui dinheiro rendendo conosco.</p>
-        <button class="btn-primary" routerLink="/movimentacoes" [queryParams]="{tipo: 'INVESTIMENTO'}">Investir Agora</button>
+        <button class="ui-btn ui-btn--primary ui-btn--lg" style="margin-top: var(--s-5)"
+                routerLink="/movimentacoes" [queryParams]="{tipo: 'INVESTIMENTO'}">
+          <app-icon name="invest" [size]="18"></app-icon> Investir agora
+        </button>
       </div>
     } @else {
-      <div class="investimentos-grid">
+      <div class="inv-grid">
         @for (inv of investimentos; track inv.id) {
-          <div class="investimento-card">
-            <div class="card-header">
-              <span class="produto-nome">{{ inv.nomeProduto }}</span>
-              <span class="taxa">Rende {{ inv.taxaRendimentoMinuto }}% / min</span>
-            </div>
-            
-            <div class="card-body">
-              <div class="valores">
-                <div class="valor-item">
-                  <span class="label">Valor Investido</span>
-                  <span class="valor">R$ {{ inv.valorInvestido | number:'1.2-2' }}</span>
-                </div>
-                <div class="valor-item rendimento">
-                  <span class="label">Rendimento Atual (+ lucro)</span>
-                  <span class="valor lucro">+ R$ {{ inv.rendimentoAcumulado | number:'1.2-2' }}</span>
-                </div>
-              </div>
-              
-              <div class="total">
-                <span class="label">Total Disponível</span>
-                <span class="valor-total">R$ {{ (inv.valorInvestido + inv.rendimentoAcumulado) | number:'1.2-2' }}</span>
+          <div class="ui-card inv-card ui-animate-in">
+            <div class="inv-card__head">
+              <span class="inv-card__ic"><app-icon name="invest" [size]="20"></app-icon></span>
+              <div class="inv-card__title-wrap">
+                <span class="inv-card__name">{{ inv.nomeProduto }}</span>
+                <span class="ui-badge ui-badge--success">{{ inv.taxaRendimentoMinuto }}% / min</span>
               </div>
             </div>
 
-            <div class="card-footer">
-              <button class="btn-resgatar" 
-                      (click)="resgatar(inv)" 
-                      [disabled]="investimentoResgatando === inv.id">
-                {{ investimentoResgatando === inv.id ? 'Resgatando...' : 'Resgatar Tudo' }}
-              </button>
+            <div class="inv-card__total">
+              <span class="inv-card__total-label">Total disponível</span>
+              <span class="inv-card__total-value ui-money">R$ {{ totalDisponivel(inv) | number:'1.2-2' }}</span>
             </div>
+
+            <!-- Barra de proporção: capital investido x rendimento (dados reais) -->
+            <div class="inv-bar" [attr.aria-label]="'Rendimento de ' + (percentualRendimento(inv) | number:'1.1-1') + ' por cento'">
+              <div class="inv-bar__fill" [style.width.%]="100 - (percentualRendimento(inv) > 100 ? 100 : percentualRendimento(inv)) / 2"></div>
+            </div>
+
+            <div class="inv-card__rows">
+              <div class="inv-card__row">
+                <span class="inv-card__dot inv-card__dot--capital"></span>
+                <span class="inv-card__row-label">Valor investido</span>
+                <span class="inv-card__row-value ui-money">R$ {{ inv.valorInvestido | number:'1.2-2' }}</span>
+              </div>
+              <div class="inv-card__row">
+                <span class="inv-card__dot inv-card__dot--rend"></span>
+                <span class="inv-card__row-label">Rendimento</span>
+                <span class="inv-card__row-value ui-money ui-pos">
+                  + R$ {{ inv.rendimentoAcumulado | number:'1.2-2' }}
+                  <small class="inv-card__pct">({{ percentualRendimento(inv) | number:'1.1-1' }}%)</small>
+                </span>
+              </div>
+            </div>
+
+            <button class="ui-btn ui-btn--accent ui-btn--block" (click)="resgatar(inv)"
+                    [disabled]="investimentoResgatando === inv.id">
+              @if (investimentoResgatando === inv.id) { <span class="ui-spinner"></span> Resgatando... }
+              @else { <app-icon name="wallet" [size]="18"></app-icon> Resgatar tudo }
+            </button>
           </div>
         }
       </div>

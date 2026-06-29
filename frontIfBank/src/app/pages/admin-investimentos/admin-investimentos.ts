@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProdutoInvestimentoDTO, ProdutoInvestimentoService } from '../../services/produto-investimento.service';
+import { IconComponent } from '../../shared/icon/icon';
 
 @Component({
   selector: 'app-admin-investimentos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, IconComponent],
   templateUrl: './admin-investimentos.html',
   styleUrl: './admin-investimentos.css'
 })

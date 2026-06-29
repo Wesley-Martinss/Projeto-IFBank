@@ -1,49 +1,85 @@
-<div class="login-page">
+<div class="auth-shell">
 
-  <!-- Painel esquerdo (visível em telas largas) -->
-  <div class="login-side">
-    <div class="side-circle side-circle-1"></div>
-    <div class="side-circle side-circle-2"></div>
-    <div class="side-logo">🏦</div>
-    <h1 class="side-brand">IFSPBank</h1>
-    <p class="side-tagline">Segurança e praticidade<br>para o seu dia a dia</p>
-  </div>
+  <!-- Painel de marca (telas largas) -->
+  <aside class="auth-brand">
+    <span class="auth-brand__deco auth-brand__deco--1"></span>
+    <span class="auth-brand__deco auth-brand__deco--2"></span>
+
+    <div class="auth-brand__top">
+      <span class="auth-brand__logo"><app-icon name="bank" [size]="26"></app-icon></span>
+      <span class="auth-brand__name">IF<strong>Bank</strong></span>
+    </div>
+
+    <div class="auth-brand__center">
+      <h1 class="auth-brand__headline">Seu banco digital, simples e seguro.</h1>
+      <p class="auth-brand__sub">Gerencie saldo, transferências PIX e investimentos em um só lugar.</p>
+    </div>
+
+    <div class="auth-brand__features">
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="transfer" [size]="20"></app-icon></span>
+        Transferências PIX em segundos
+      </div>
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="invest" [size]="20"></app-icon></span>
+        Invista e acompanhe seus rendimentos
+      </div>
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="shield" [size]="20"></app-icon></span>
+        Segurança em cada acesso
+      </div>
+    </div>
+  </aside>
 
   <!-- Formulário -->
-  <div class="login-main">
-    <div class="login-card">
+  <main class="auth-panel">
+    <div class="auth-card ui-animate-in">
 
-      <!-- Logo mobile -->
-      <div class="card-logo-mobile">
-        <div class="card-logo-icon">🏦</div>
-        <span class="card-logo-name">IFSPBank</span>
+      <div class="auth-mobile-brand">
+        <span class="auth-mobile-brand__logo"><app-icon name="bank" [size]="22"></app-icon></span>
+        <span class="auth-mobile-brand__name">IF<strong>Bank</strong></span>
       </div>
 
-      <h2 class="login-heading">Bem-vindo de volta</h2>
-      <p class="login-sub">Acesse sua conta</p>
-
-      <div class="field">
-        <label>E-mail</label>
-        <input type="email" placeholder="seu@email.com" [(ngModel)]="email" autocomplete="off" />
+      <div class="auth-head">
+        <h2 class="auth-head__title">Bem-vindo de volta</h2>
+        <p class="auth-head__sub">Acesse sua conta para continuar</p>
       </div>
 
-      <div class="field">
-        <label>Senha</label>
-        <input type="password" placeholder="••••••••" [(ngModel)]="senha" (keyup.enter)="entrar()" />
+      <div class="ui-field">
+        <label class="ui-label" for="login-email">E-mail</label>
+        <input id="login-email" class="ui-input" type="email" inputmode="email" autocomplete="email"
+               placeholder="seu@email.com" [(ngModel)]="email" />
+      </div>
+
+      <div class="ui-field">
+        <label class="ui-label" for="login-senha">Senha</label>
+        <div class="ui-input-wrap">
+          <input id="login-senha" class="ui-input" [type]="mostrarSenha ? 'text' : 'password'"
+                 autocomplete="current-password" placeholder="Sua senha"
+                 [(ngModel)]="senha" (keyup.enter)="entrar()" />
+          <button type="button" class="ui-input-icon" (click)="mostrarSenha = !mostrarSenha"
+                  [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'">
+            <app-icon [name]="mostrarSenha ? 'eye-off' : 'eye'" [size]="20"></app-icon>
+          </button>
+        </div>
       </div>
 
       @if (erro) {
-        <div class="alert-erro">{{ erro }}</div>
+        <div class="ui-alert ui-alert--error" role="alert">
+          <app-icon name="info" [size]="18"></app-icon>
+          <span>{{ erro }}</span>
+        </div>
       }
 
-      <button class="btn-entrar" (click)="entrar()" [disabled]="carregando">
-        {{ carregando ? 'Entrando...' : 'Entrar' }}
+      <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" style="margin-top: var(--s-2)"
+              (click)="entrar()" [disabled]="carregando">
+        @if (carregando) { <span>Entrando...</span> } @else { <span>Entrar</span> }
       </button>
 
-      <p class="cadastro-link">
+      <p class="auth-foot">
         Não tem conta? <a routerLink="/cadastro">Criar agora</a>
       </p>
     </div>
-  </div>
+  </main>
 
 </div>

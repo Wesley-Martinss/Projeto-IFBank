@@ -1,20 +1,21 @@
-import { Component, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MovimentacaoService } from '../../services/movimentacao';
 import { ProdutoInvestimentoService, ProdutoInvestimentoDTO } from '../../services/produto-investimento.service';
 import { MovimentacaoDTO, TipoMovimentacao } from '../../models/movimentacao.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { IconComponent, IconName } from '../../shared/icon/icon';
+import { TopbarComponent } from '../../shared/topbar/topbar';
 
 @Component({
   selector: 'app-movimentacoes',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, IconComponent, TopbarComponent],
   templateUrl: './movimentacoes.html',
   styleUrl: './movimentacoes.css',
-  encapsulation: ViewEncapsulation.None
 })
 export class MovimentacoesComponent {
 
@@ -42,8 +43,23 @@ private getToken() {
     private produtoService: ProdutoInvestimentoService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
+
+  voltar() {
+    this.router.navigate(['/home']);
+  }
+
+  getIconName(): IconName {
+    const map: Record<string, IconName> = {
+      DEPOSITO: 'deposit',
+      SAQUE: 'withdraw',
+      TRANSFERENCIA: 'transfer',
+      INVESTIMENTO: 'invest',
+    };
+    return map[this.tipoMovimentacao ?? ''] ?? 'transfer';
+  }
 
   ngOnInit() {
   this.route.queryParams.subscribe(params => {

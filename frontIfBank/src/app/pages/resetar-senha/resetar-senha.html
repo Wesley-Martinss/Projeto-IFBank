@@ -1,59 +1,102 @@
-<div class="auth-page">
-  <div class="auth-card">
-    <div class="auth-logo">🏦</div>
-    <h2 class="auth-title">Redefinir Senha</h2>
+<div class="auth-shell">
 
-    @if (tokenInvalido) {
-      <div class="msg-erro">❌ Link inválido ou expirado. Solicite um novo.</div>
-      <button class="btn-link" (click)="irParaEsqueci()">← Solicitar novo link</button>
-    }
+  <aside class="auth-brand">
+    <span class="auth-brand__deco auth-brand__deco--1"></span>
+    <span class="auth-brand__deco auth-brand__deco--2"></span>
 
-    @if (!tokenInvalido && !concluido) {
-      <div class="form-group">
-        <label>Senha atual</label>
-        <input
-          type="password"
-          [(ngModel)]="senhaAtual"
-          placeholder="Digite sua senha atual"
-          class="form-input"
-        />
+    <div class="auth-brand__top">
+      <span class="auth-brand__logo"><app-icon name="bank" [size]="26"></app-icon></span>
+      <span class="auth-brand__name">IF<strong>Bank</strong></span>
+    </div>
+
+    <div class="auth-brand__center">
+      <h1 class="auth-brand__headline">Defina uma nova senha.</h1>
+      <p class="auth-brand__sub">Escolha uma senha forte para manter sua conta protegida.</p>
+    </div>
+
+    <div class="auth-brand__features">
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="lock" [size]="20"></app-icon></span>
+        Mínimo de 6 caracteres
+      </div>
+      <div class="auth-feature">
+        <span class="auth-feature__ic"><app-icon name="shield" [size]="20"></app-icon></span>
+        Acesso seguro e protegido
+      </div>
+    </div>
+  </aside>
+
+  <main class="auth-panel">
+    <div class="auth-card ui-animate-in">
+
+      <div class="auth-mobile-brand">
+        <span class="auth-mobile-brand__logo"><app-icon name="bank" [size]="22"></app-icon></span>
+        <span class="auth-mobile-brand__name">IF<strong>Bank</strong></span>
       </div>
 
-      <div class="form-group">
-        <label>Nova senha</label>
-        <input
-          type="password"
-          [(ngModel)]="novaSenha"
-          placeholder="Mínimo 6 caracteres"
-          class="form-input"
-        />
+      <div class="auth-head">
+        <h2 class="auth-head__title">Redefinir senha</h2>
+        <p class="auth-head__sub">Informe sua senha atual e a nova senha</p>
       </div>
 
-      <div class="form-group">
-        <label>Confirmar nova senha</label>
-        <input
-          type="password"
-          [(ngModel)]="confirmarSenha"
-          placeholder="Repita a nova senha"
-          class="form-input"
-        />
-      </div>
-
-      @if (erro) {
-        <div class="msg-erro">❌ {{ erro }}</div>
+      @if (tokenInvalido) {
+        <div class="ui-alert ui-alert--error" role="alert">
+          <app-icon name="info" [size]="18"></app-icon>
+          <span>Link inválido ou expirado. Solicite um novo.</span>
+        </div>
+        <button class="auth-back" (click)="irParaEsqueci()">
+          <app-icon name="arrow-left" [size]="16"></app-icon> Voltar ao login
+        </button>
       }
 
-      <button class="btn-primary" (click)="redefinir()" [disabled]="carregando">
-        {{ carregando ? 'Salvando...' : 'Confirmar nova senha' }}
-      </button>
-    }
+      @if (!tokenInvalido && !concluido) {
+        <div class="ui-field">
+          <label class="ui-label">Senha atual</label>
+          <input class="ui-input" [type]="mostrarSenha ? 'text' : 'password'"
+                 [(ngModel)]="senhaAtual" autocomplete="current-password" placeholder="Digite sua senha atual" />
+        </div>
 
-    @if (concluido) {
-      <div class="sucesso-box">
-        <div class="sucesso-icon">✅</div>
-        <p>Senha alterada com sucesso!</p>
-        <p class="sucesso-sub">Redirecionando para o login...</p>
-      </div>
-    }
-  </div>
+        <div class="ui-field">
+          <label class="ui-label">Nova senha</label>
+          <div class="ui-input-wrap">
+            <input class="ui-input" [type]="mostrarSenha ? 'text' : 'password'"
+                   [(ngModel)]="novaSenha" autocomplete="new-password" placeholder="Mínimo 6 caracteres" />
+            <button type="button" class="ui-input-icon" (click)="mostrarSenha = !mostrarSenha"
+                    [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'">
+              <app-icon [name]="mostrarSenha ? 'eye-off' : 'eye'" [size]="20"></app-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-label">Confirmar nova senha</label>
+          <input class="ui-input" [type]="mostrarSenha ? 'text' : 'password'"
+                 [(ngModel)]="confirmarSenha" autocomplete="new-password" placeholder="Repita a nova senha" />
+        </div>
+
+        @if (erro) {
+          <div class="ui-alert ui-alert--error" role="alert">
+            <app-icon name="info" [size]="18"></app-icon>
+            <span>{{ erro }}</span>
+          </div>
+        }
+
+        <button class="ui-btn ui-btn--primary ui-btn--block ui-btn--lg" style="margin-top: var(--s-2)"
+                (click)="redefinir()" [disabled]="carregando">
+          {{ carregando ? 'Salvando...' : 'Confirmar nova senha' }}
+        </button>
+      }
+
+      @if (concluido) {
+        <div class="ui-empty">
+          <div class="ui-empty__icon" style="background: var(--success-bg); color: var(--success)">
+            <app-icon name="check-circle" [size]="32"></app-icon>
+          </div>
+          <p class="ui-empty__title">Senha alterada com sucesso!</p>
+          <p>Redirecionando para o login...</p>
+        </div>
+      }
+    </div>
+  </main>
+
 </div>

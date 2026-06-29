@@ -5,16 +5,27 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AdminService, ContaAdmin, MovimentacaoAdmin } from '../../services/admin.service';
 import { AdminInvestimentosComponent } from '../admin-investimentos/admin-investimentos';
+import { IconComponent, IconName } from '../../shared/icon/icon';
+import { TopbarComponent } from '../../shared/topbar/topbar';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminInvestimentosComponent],
+  imports: [CommonModule, FormsModule, AdminInvestimentosComponent, IconComponent, TopbarComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
 export class AdminComponent implements OnInit {
   abaAtiva: 'contas' | 'transacoes' | 'gerentes' | 'investimentos' = 'contas';
+
+  readonly abas: { id: 'contas' | 'transacoes' | 'gerentes' | 'investimentos'; label: string; icon: IconName }[] = [
+    { id: 'contas', label: 'Contas', icon: 'users' },
+    { id: 'transacoes', label: 'Transações', icon: 'receipt' },
+    { id: 'gerentes', label: 'Gerentes', icon: 'user' },
+    { id: 'investimentos', label: 'Investimentos', icon: 'invest' },
+  ];
+
+  mostrarSenhaGerente = false;
 
   contas: ContaAdmin[] = [];
   movimentacoes: MovimentacaoAdmin[] = [];

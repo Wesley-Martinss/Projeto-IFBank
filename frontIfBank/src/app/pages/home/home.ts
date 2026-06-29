@@ -5,11 +5,13 @@ import { ExtratoService, MovimentacaoResumoDTO } from '../../services/extrato.se
 import { UsuarioDTO } from '../../models/usuario.model';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, NgZone, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { IconComponent, IconName } from '../../shared/icon/icon';
+import { TopbarComponent } from '../../shared/topbar/topbar';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent, TopbarComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -39,9 +41,8 @@ export class HomeComponent implements OnInit {
     this.usuario = this.authService.getUsuarioLogado();
     console.log('1. Usuário Logado:', this.usuario);
 
-    if (this.usuario?.foto) {
-      this.foto = this.authService.getFoto?.() || localStorage.getItem('foto') || '';
-    }
+    // A foto não vem no token JWT; carrega sempre do localStorage (salvo no login/upload)
+    this.foto = this.authService.getFoto() || '';
 
     // Se não tiver usuário logado, joga de volta pro Login
     if (!this.usuario) {
@@ -106,13 +107,12 @@ export class HomeComponent implements OnInit {
     if (resultado.sucesso && resultado.foto) {
       this.foto = resultado.foto;
 
-      // Atualiza o localStorage
-      const atualizado = { ...this.usuario, foto: resultado.foto };
-      localStorage.setItem('usuarioLogado', JSON.stringify(atualizado));
-      this.usuario = atualizado;
+      // Persiste a foto (best-effort; imagens grandes podem estourar a cota)
+      this.authService.salvarFoto(resultado.foto);
+      this.usuario = { ...this.usuario, foto: resultado.foto };
       this.cdr.detectChanges();
     } else {
-      alert('❌ Erro: ' + resultado.erro);
+      alert('Erro ao enviar a foto: ' + resultado.erro);
     }
   }
 
@@ -154,15 +154,15 @@ export class HomeComponent implements OnInit {
   }
 
   alterarSenha() {
-    if (!this.usuario?.email) return;
+    // O e-mail vem como "sub" no token JWT (não há campo "email" decodificado)
+    const email: string = this.usuario?.email || (this.usuario as any)?.sub || '';
+    if (!email) return;
 
-    this.authService.esqueceuSenha(this.usuario.email).then((resultado) => {
+    this.authService.esqueceuSenha(email).then((resultado) => {
       if (resultado.sucesso) {
-        alert(
-          '📧 E-mail enviado para ' + this.usuario?.email + '!\nVerifique sua caixa de entrada.',
-        );
+        alert('E-mail enviado para ' + email + '!\nVerifique sua caixa de entrada.');
       } else {
-        alert('❌ Erro ao enviar e-mail: ' + resultado.erro);
+        alert('Erro ao enviar e-mail: ' + resultado.erro);
       }
     });
   }
@@ -204,14 +204,14 @@ export class HomeComponent implements OnInit {
     return rotulos[tipo] ?? tipo;
   }
 
-  iconeMovimentacao(tipo: string): string {
-    const icones: Record<string, string> = {
-      DEPOSITO: '💰',
-      SAQUE: '💸',
-      TRANSFERENCIA: '🔄',
-      INVESTIMENTO: '📈',
-      RENDIMENTO: '📊',
+  iconeMovimentacao(tipo: string): IconName {
+    const icones: Record<string, IconName> = {
+      DEPOSITO: 'deposit',
+      SAQUE: 'withdraw',
+      TRANSFERENCIA: 'transfer',
+      INVESTIMENTO: 'invest',
+      RENDIMENTO: 'chart',
     };
-    return icones[tipo] ?? '🔁';
+    return icones[tipo] ?? 'transfer';
   }
 }
