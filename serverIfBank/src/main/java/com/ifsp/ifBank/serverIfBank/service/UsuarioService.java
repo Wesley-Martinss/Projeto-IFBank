@@ -29,6 +29,13 @@ public class UsuarioService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
+    public UsuarioDTO buscarPorId(Integer id) {
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        return usuarioMapper.toDTO(usuario);
+    }
 
     public List<UsuarioDTO> todosOsUsuariosDTOS() {
 
@@ -113,4 +120,29 @@ public class UsuarioService {
         contaService.criarConta(cliente);
     }
 
+
+    public Usuario buscarUsuarioPorId(Integer id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+    }
+
+    @Transactional
+    public Usuario atualizarPerfil(Integer id, Usuario dadosAtualizados) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        usuario.setNome(dadosAtualizados.getNome());
+        usuario.setEmail(dadosAtualizados.getEmail());
+        usuario.setTelefone(dadosAtualizados.getTelefone());
+        usuario.setEndereco(dadosAtualizados.getEndereco());
+        usuario.setDataNascimento(dadosAtualizados.getDataNascimento());
+
+        // CPF, senha, statusConta, ativo NÃO são atualizados por aqui — propositalmente.
+
+        if (dadosAtualizados.getFoto() != null) {
+            usuario.setFoto(dadosAtualizados.getFoto());
+        }
+
+        return usuarioRepository.save(usuario);
+    }
 }

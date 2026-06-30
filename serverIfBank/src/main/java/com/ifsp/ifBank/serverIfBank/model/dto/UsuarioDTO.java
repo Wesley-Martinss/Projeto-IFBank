@@ -16,4 +16,6 @@ public class UsuarioDTO {
     private TipoUsuario tipoUsuario;
 
     private String token;
+
+
 }

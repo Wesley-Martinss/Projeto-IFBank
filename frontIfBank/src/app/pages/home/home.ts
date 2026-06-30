@@ -36,37 +36,47 @@ export class HomeComponent implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit() {
-    // 1. Pega o usuário logado
-    this.usuario = this.authService.getUsuarioLogado();
-    console.log('1. Usuário Logado:', this.usuario);
+ async ngOnInit() {
+  // Usuário obtido pelo token (apenas para pegar o ID e o tipo)
+  const usuarioToken = this.authService.getUsuarioLogado();
 
-    // A foto não vem no token JWT; carrega sempre do localStorage (salvo no login/upload)
-    this.foto = this.authService.getFoto() || '';
-
-    // Se não tiver usuário logado, joga de volta pro Login
-    if (!this.usuario) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    // Admin vai para o painel administrativo
-    if (this.usuario.tipoUsuario === 'ADMIN') {
-      this.router.navigate(['/admin']);
-      return;
-    }
-
-    // 2. Se for Gerente, carrega as solicitações de contas pendentes
-    if (this.usuario.tipoUsuario === 'GERENTE') {
-      this.carregarPendentes();
-    }
-
-    // 3. Se for Cliente, carrega o dashboard de saldo e o extrato
-    if (this.usuario.tipoUsuario === 'CLIENTE') {
-      this.carregarDashboard();
-      this.carregarExtrato();
-    }
+  if (!usuarioToken) {
+    this.router.navigate(['/login']);
+    return;
   }
+
+  // Busca os dados atualizados no banco
+  const usuarioBanco = await this.authService.buscarUsuario(usuarioToken.id);
+
+  if (!usuarioBanco) {
+    this.router.navigate(['/login']);
+    return;
+  }
+
+  this.usuario = usuarioBanco;
+
+  // Foto do banco (caso não exista, usa a salva localmente)
+  this.foto = usuarioBanco.foto || this.authService.getFoto() || '';
+
+  // Admin vai para o painel administrativo
+  if (this.usuario.tipoUsuario === 'ADMIN') {
+    this.router.navigate(['/admin']);
+    return;
+  }
+
+  // Se for gerente, carrega as contas pendentes
+  if (this.usuario.tipoUsuario === 'GERENTE') {
+    await this.carregarPendentes();
+  }
+
+  // Se for cliente, carrega dashboard e extrato
+  if (this.usuario.tipoUsuario === 'CLIENTE') {
+    await Promise.all([
+      this.carregarDashboard(),
+      this.carregarExtrato()
+    ]);
+  }
+}
 
   async carregarDashboard() {
     if (!this.usuario) return;
@@ -97,7 +107,9 @@ export class HomeComponent implements OnInit {
   triggerFotoInput() {
     this.fotoInput.nativeElement.click();
   }
-
+  abrirPerfil() {
+    this.router.navigate(['/meu-perfil']);
+  }
   async onFotoSelecionada(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || !input.files[0] || !this.usuario) return;

@@ -1,14 +1,5 @@
-/*export interface UsuarioDTO {
-  id: number;
-  nome: string;
-  email: string;
-  tipoUsuario: 'CLIENTE' | 'GERENTE' | 'ADMIN';
-  foto: string;
-  token: string
-}
-*/
-
-export interface UsuarioDTO {
+// models/usuario.model.ts
+export interface Usuario {
   id: number;
   nome: string;
   email: string;
@@ -19,4 +10,7 @@ export interface UsuarioDTO {
   telefone?: string;
   endereco?: string;
   dataNascimento?: string; // formato ISO yyyy-MM-dd
+  statusConta?: string;
+  ativo?: boolean;
+  dataCadastro?: string;
 }

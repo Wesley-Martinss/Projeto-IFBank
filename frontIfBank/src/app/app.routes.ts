@@ -8,9 +8,11 @@ import { AdminInvestimentosComponent } from './pages/admin-investimentos/admin-i
 import { ResetarSenhaComponent } from './pages/resetar-senha/resetar-senha';
 import { MeusInvestimentosComponent } from './pages/meus-investimentos/meus-investimentos';
 import { MinhasChavesComponent } from './pages/minhas-chaves/minhas-chaves';
+import { PerfilComponent } from './pages/perfil/perfil';
+import { LandingComponent } from './pages/landing/landing';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: LandingComponent }, 
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent },
   { path: 'movimentacoes', component: MovimentacoesComponent },
@@ -20,4 +22,6 @@ export const routes: Routes = [
   { path: 'resetar-senha', component: ResetarSenhaComponent },
   { path: 'meus-investimentos', component: MeusInvestimentosComponent },
   { path: 'minhas-chaves', component: MinhasChavesComponent },
+  { path: 'meu-perfil', component: PerfilComponent },
+
 ];

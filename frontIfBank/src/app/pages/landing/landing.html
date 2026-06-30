@@ -1,0 +1,80 @@
+<!-- pages/landing/landing.html -->
+<div class="landing">
+
+  <!-- Topbar simples -->
+  <header class="landing-nav">
+    <span class="landing-nav__logo">IF<span class="landing-nav__logo-accent">Bank</span></span>
+    <button class="landing-nav__cta" (click)="irParaLogin()">Entrar</button>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">Sua conta, do seu jeito</p>
+      <h1 class="hero__title">
+        Banco de verdade,<br />
+        <span class="hero__title-accent">sem burocracia.</span>
+      </h1>
+      <p class="hero__subtitle">
+        Abra sua conta em minutos. PIX sem taxa, investimentos simples
+        e um extrato que você realmente entende.
+      </p>
+      <div class="hero__actions">
+        <button class="btn btn--primary" (click)="irParaCadastro()">Abrir minha conta</button>
+        <button class="btn btn--ghost" (click)="irParaLogin()">Já tenho conta</button>
+      </div>
+    </div>
+
+    <!-- Signature: extrato vivo -->
+    <div class="hero__visual">
+      <div class="extrato-mock">
+        <div class="extrato-mock__head">
+          <span class="extrato-mock__dot"></span>
+          <span class="extrato-mock__dot"></span>
+          <span class="extrato-mock__dot"></span>
+          <span class="extrato-mock__title">Extrato</span>
+        </div>
+        <div class="extrato-mock__list">
+          @for (l of lancamentos; track l.label) {
+            <div class="extrato-mock__item">
+              <span class="extrato-mock__label">{{ l.label }}</span>
+              <span class="extrato-mock__valor" [class.is-pos]="l.positivo" [class.is-neg]="!l.positivo">
+                {{ l.valor }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recursos -->
+  <section class="recursos">
+    <p class="recursos__eyebrow">Por que IFBank</p>
+    <h2 class="recursos__title">Tudo que um banco devia ser.</h2>
+
+    <div class="recursos__grid">
+      @for (r of recursos; track r.titulo) {
+        <div class="recurso-card">
+          <span class="recurso-card__icon">{{ r.icone }}</span>
+          <h3 class="recurso-card__titulo">{{ r.titulo }}</h3>
+          <p class="recurso-card__texto">{{ r.texto }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="cta-final">
+    <h2 class="cta-final__title">Pronto para começar?</h2>
+    <p class="cta-final__subtitle">Leva menos de 5 minutos para abrir sua conta.</p>
+    <button class="btn btn--primary btn--lg" (click)="irParaCadastro()">Criar minha conta gratuita</button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <span>IFBank © 2026</span>
+    <button class="landing-footer__link" (click)="irParaLogin()">Entrar na minha conta</button>
+  </footer>
+
+</div>

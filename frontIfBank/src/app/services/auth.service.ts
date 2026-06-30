@@ -82,6 +82,27 @@ private decodeToken(token: string): any {
   localStorage.removeItem('token');
 }
 
+
+async buscarUsuario(id: number): Promise<UsuarioDTO | null> {
+  try {
+    const res = await fetch(`${this.api}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`
+      }
+    });
+
+    if (!res.ok) {
+      return null;
+    }
+
+    return await res.json();
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+
   // ✅ token adicionado
   async listarPendentes() {
     try {

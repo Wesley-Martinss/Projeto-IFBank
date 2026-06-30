@@ -1,0 +1,116 @@
+<!-- pages/perfil/perfil.html -->
+<div class="ui-page">
+  <app-topbar
+    [showAccount]="false"
+    [tipoUsuario]="usuario?.tipoUsuario"
+    [foto]="foto"
+    (avatarClick)="triggerFotoInput()"
+    (logout)="voltar()">
+  </app-topbar>
+
+  <input type="file" #fotoInput accept="image/*" style="display:none" (change)="onFotoSelecionada($event)" />
+
+  <main class="ui-container perfil">
+
+    <button class="ui-btn ui-btn--ghost perfil__back" (click)="voltar()">
+      <app-icon name="arrow-left" [size]="16"></app-icon>
+      Voltar
+    </button>
+
+    <div class="home-welcome ui-animate-in">
+      <p class="ui-eyebrow">Conta</p>
+      <h1 class="home-welcome__name">Meu perfil</h1>
+    </div>
+
+    @if (mensagemSucesso) {
+      <div class="ui-alert ui-alert--success" role="status">
+        <app-icon name="check-circle" [size]="18"></app-icon>
+        <span>{{ mensagemSucesso }}</span>
+      </div>
+    }
+    @if (mensagemErro) {
+      <div class="ui-alert ui-alert--error" role="alert">
+        <span>{{ mensagemErro }}</span>
+      </div>
+    }
+
+    <!-- Cartão de avatar -->
+    <section class="ui-card perfil-avatar-card ui-animate-in">
+      <div class="perfil-avatar">
+        @if (foto) {
+          <img class="perfil-avatar__img" [src]="foto" alt="Foto de perfil" />
+        } @else {
+          <span class="perfil-avatar__placeholder">{{ nome | slice:0:1 }}</span>
+        }
+        <button class="perfil-avatar__edit" (click)="triggerFotoInput()" [disabled]="enviandoFoto" title="Trocar foto">
+          <app-icon name="camera" [size]="16"></app-icon>
+        </button>
+      </div>
+
+      <div class="perfil-avatar__info">
+        <p class="perfil-avatar__name">{{ usuario?.nome }}</p>
+        <p class="perfil-avatar__tipo">{{ rotuloTipoUsuario(usuario?.tipoUsuario) }}</p>
+        @if (enviandoFoto) {
+          <p class="perfil-avatar__status">Enviando foto...</p>
+        }
+      </div>
+    </section>
+
+    <!-- Dados pessoais -->
+    <section class="ui-card perfil-form ui-animate-in">
+      <p class="section-label">Dados pessoais</p>
+
+      <div class="ui-field">
+        <label class="ui-label" for="nome">Nome completo</label>
+        <input id="nome" class="ui-input" type="text" [(ngModel)]="nome" name="nome" autocomplete="name" />
+      </div>
+
+      <div class="ui-field">
+        <label class="ui-label" for="email">E-mail</label>
+        <input id="email" class="ui-input" type="email" [(ngModel)]="email" name="email" autocomplete="email" />
+      </div>
+
+      <div class="ui-row">
+        <div class="ui-field">
+          <label class="ui-label" for="telefone">Telefone</label>
+          <input id="telefone" class="ui-input" type="tel" [(ngModel)]="telefone" name="telefone" placeholder="(00) 00000-0000" autocomplete="tel" />
+        </div>
+
+        <div class="ui-field">
+          <label class="ui-label" for="dataNascimento">Data de nascimento</label>
+          <input id="dataNascimento" class="ui-input" type="date" [(ngModel)]="dataNascimento" name="dataNascimento" />
+        </div>
+      </div>
+
+      <div class="ui-field">
+        <label class="ui-label" for="endereco">Endereço</label>
+        <input id="endereco" class="ui-input" type="text" [(ngModel)]="endereco" name="endereco" autocomplete="street-address" />
+      </div>
+
+      <div class="ui-field">
+        <label class="ui-label">CPF</label>
+        <input class="ui-input ui-input--readonly" type="text" [value]="cpf" disabled />
+        <span class="ui-field__hint">O CPF não pode ser alterado.</span>
+      </div>
+
+      <button class="ui-btn ui-btn--primary perfil-form__submit" [disabled]="salvando" (click)="salvar()">
+        @if (salvando) {
+          <span>Salvando...</span>
+        } @else {
+          <app-icon name="check" [size]="16"></app-icon>
+          <span>Salvar alterações</span>
+        }
+      </button>
+    </section>
+
+    <!-- Segurança -->
+    <section class="ui-card perfil-form ui-animate-in">
+      <p class="section-label">Segurança</p>
+      <button class="ui-btn ui-btn--secondary" (click)="alterarSenha()">
+        <app-icon name="lock" [size]="16"></app-icon>
+        Alterar senha
+      </button>
+    </section>
+
+  </main>
+</div>

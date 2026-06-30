@@ -2,15 +2,11 @@ package com.ifsp.ifBank.serverIfBank.controller;
 
 import java.util.List;
 
+import com.ifsp.ifBank.serverIfBank.model.mapper.UsuarioMapper;
+import com.ifsp.ifBank.serverIfBank.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ifsp.ifBank.serverIfBank.model.Usuario;
 import com.ifsp.ifBank.serverIfBank.model.dto.LoginDTO;
@@ -25,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
 
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> listarUsuariosDTOS() {
@@ -33,6 +31,15 @@ public class UsuarioController {
                 usuarioService.todosOsUsuariosDTOS();
 
         return ResponseEntity.ok(usuarios);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.buscarUsuarioPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> atualizarPerfil(@PathVariable Integer id, @RequestBody Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.atualizarPerfil(id, usuario));
     }
 
     @PostMapping("/login")
